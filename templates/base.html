@@ -1,0 +1,25 @@
+{% load static %}
+<html>
+    <head>
+        <Title>
+            {%block title%}
+            {%endblock%}
+        </Title>
+        <link rel="stylesheet" href="{% static 'resources/css/style.css'%}">
+        <link rel="stylesheet" href="{% static 'vendors/css/grid.css' %}">
+        <link rel="stylesheet" href="{% static 'vendors/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+        <link rel="stylesheet" href="{% static 'resources/css/post.css'%}">
+        <link rel="stylesheet" href="{% static 'resources/css/profile.css'%}">
+        <link rel="stylesheet" href="{% static 'resources/css/edit-profile.css'%}">
+        
+        <!--link rel="stylesheet" href="{% static 'vendors/css/bootstrap.min.css'%}"-->
+    </head>
+    <body>
+        
+        <!--Body-->
+        {%block content%}
+        {%endblock%}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="{% static 'resources/js/all.js'%}"></script>
+    </body>
+</html>

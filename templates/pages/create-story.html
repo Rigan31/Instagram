@@ -1,0 +1,20 @@
+{% extends 'base.html'%}
+
+
+{% block content %}
+
+<!--Navbar-->
+{% include 'navbar.html'%}
+
+<div class="Create-story">
+        <div class="create-story-header">
+                <h1>Create a story</h1>
+        </div>
+        <form method="POST" action="{% url 'create-story'%}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input name="file" class="file" type='file' multiple />
+            <input class="button" type="submit" value="Add to your story">
+        </form>
+</div>
+
+{% endblock %}

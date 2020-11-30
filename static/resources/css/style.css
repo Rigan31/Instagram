@@ -1,0 +1,235 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+a{
+    text-decoration: none;
+}
+body{
+    background-color:rgb(250,250,250)
+}
+.clearfix{zoom:1}
+
+.clearfix:after{
+    content: '.';
+    clear: both;
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+nav{
+    border-bottom: 1px solid black;
+    background-color: white;
+}
+.row{
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/********navbar**********/
+.logo-box{
+    text-align: left;
+}
+
+.logo{
+    height: 40px;
+    width: auto;
+}
+
+.search-box{
+    text-align: center;
+    margin-top: 5px;
+    border: 1px solid black;
+    width: 70%;
+    padding: 5px;
+}
+
+.search-box input{
+    border: 1px solid transparent;
+}
+
+.search-box input:active{
+    border: 1px solid transparent;
+}
+
+.main-nav{
+    list-style: none;
+    float: right;
+    margin-top: 12px;
+}
+
+.main-nav li{
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.icon{
+    color: cornflowerblue;
+    font-size: 120%;
+}
+/************************/
+
+.main-part{
+    width: 70%;
+    height: auto;
+    margin: 20px auto 0 auto;
+}
+.post-and-story{
+    float: left;
+    width: 60%;
+    margin-right: 20px;
+}
+
+.optional{
+    float: left;
+    width: 35%;
+    padding: 15px;
+    margin-top: 50px;
+}
+
+.stories{
+    height: 110px;
+    padding: 10px;
+    padding-bottom: 20px;
+    width: auto;
+    background-color: white;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+.story{
+    height: 80px;
+    width: 80px; 
+    margin-right: 15px;
+    display: inline-block;
+}
+
+.story:last-child{
+    margin-right: 0px;
+}
+
+.story-photo{
+    padding: 3px;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    border: 2px solid blue;
+}
+
+.post{
+    margin-top: 30px;
+    background-color: white;
+    width: 100%;
+    border-radius: 10px;
+}
+
+.poster{
+    width: 100%;
+    padding: 5px;
+    border-bottom: 1px solid black;
+}
+
+.photo-box{
+    height: 60px;
+    width: 60px;
+    float: left;
+}
+.photo{
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
+    padding: 3px;
+}
+.name{
+    float: left;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.caption{
+    padding: 5px;
+    margin: 5px;
+}
+
+.media{
+    width: 100%;
+    height: auto;
+}
+
+.post-photo{
+    width: 100%;
+}
+
+.icons{
+    list-style: none;
+    padding: 5px;
+    border-bottom: 1px solid black;
+}
+
+.icons li{
+    float: left;
+    font-size: 160%;
+    margin-right: 15px;
+}
+.icons li:last-child{
+    float: right;
+    margin-right: 0px;
+}
+
+.fa-heart{
+    color: red;
+}
+
+.text{
+    padding: 10px;
+}
+
+.comments{
+    padding: 10px;
+    list-style: none;
+}
+
+.add-comment{
+    border-top: 1px solid black;
+    padding: 10px;
+}
+.add-comment input{
+    float: left;
+    width: 80%; 
+    height: 30px;
+    border: 1px solid transparent;
+    padding: 20px;
+}
+
+.add-comment a{
+    text-decoration: none;
+    float: right;
+    display: block;
+    margin-top: 2px;
+    padding:10px;
+    background-color: thistle;
+}
+.profile{
+    margin-left: 15px;
+}
+.suggestions{
+    margin-top: 20px;
+    margin-left: 15px;
+}
+
+.header{
+    margin-bottom: 15px;
+}
+
+.suggested{
+    float: left;
+}
+.see-all{
+    float: right;
+}
+.follow{
+    float: right;
+    margin-top: 20px;
+}

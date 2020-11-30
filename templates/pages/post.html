@@ -1,0 +1,30 @@
+{% extends 'base.html'%}
+
+
+{% block content %}
+
+<!--Navbar-->
+{% include 'navbar.html'%}
+
+<div class="Create-post">
+        <div class="post-header">
+                <h1>Create a Post</h1>
+        </div>
+        <div class="poster clearfix">
+                <div class="photo-box">
+                        <img src="{{ photo }}" alt="identity" class="photo">
+                </div>
+                <div class="name">
+                        {{name}}
+                </div>
+        </div>
+
+        <form method="POST" action="{% url 'post'%}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <textarea name="caption" placeholder="What's on your mind?"></textarea>
+                <input name="file" class="file" type='file' multiple />
+                <input class="button" type="submit" value="Add to your post">
+        </form>
+</div>
+
+{% endblock %}

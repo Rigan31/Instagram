@@ -1,0 +1,155 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+<!--Navbar-->
+{% include 'navbar.html'%}
+
+<!--Body-->
+<div class="main-part clearfix">
+    <div class="post-and-story">
+        <div class="stories">
+            <div class="story">
+                <img src="steins_gate.jpg" class="story-photo">
+            </div>
+            <div class="story">
+                <img src="aot.png" class="story-photo">
+            </div>
+            <div class="story">
+                <img src="Wallpaper.jpg" class="story-photo">
+            </div>
+            <div class="story">
+                <img src="aot.png" class="story-photo">
+            </div>
+            <div class="story">
+                <img src="aot.png" class="story-photo">
+            </div>
+            <div class="story">
+                <img src="Wallpaper.jpg" class="story-photo">
+            </div>
+        </div>
+
+        {% for post in posts %}
+            <div class="post">
+                <div class="poster clearfix">
+                    <div class="photo-box">
+                        <a href="{% url 'profile' post.poster_id %}"><img src="{{ post.poster_photo }}" alt="identity" class="photo"></a>
+                    </div>
+                    
+                    <div class="name">
+                        <a href="{% url 'profile' post.poster_id %}">{{post.poster_name}}</a>
+                    </div>
+                </div>
+
+                <div class="caption">
+                    {{post.caption}}
+                </div>
+                
+                {% for photo in post.photos %}
+                    <div class="media">
+                        <img src="{{ photo }}" class="post-photo">
+                    </div>
+                {% endfor %}
+
+                {% for video in post.videos %}
+                    <div class="media">
+                        <video src="{{ video }}" class="post-video" controls></video>
+                    </div>
+                {% endfor %}
+                
+                <!--div class="media">
+                    <script type="text/javascript">
+                        loadPostimage({{post.photos}})
+                    </script>
+                </div-->
+                
+                {% csrf_token %}
+                <ul class="icons clearfix">
+                    {% if post.isLike %}
+                        <li><i class="fa fa-heart" aria-hidden="true" onclick="likes({{user_id}}, {{post.post_id}}, this)"></i></li>
+                    {% else %}
+                        <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes({{user_id}}, {{post.post_id}}, this)"></i></li>
+                    {% endif %}
+                    <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
+                    <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
+                    {% if post.isSave %}
+                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved({{user_id}}, {{post.post_id}}, this)"></i></li>
+                    {% else %}
+                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved({{user_id}}, {{post.post_id}}, this)"></i></li>
+                    {% endif %}
+                    
+                </ul>
+                <div class="text">
+                    <p class="total_likes">{{post.total_likes}} likes</p>
+                    <p>View all 2 comments</p>
+                </div>
+                <ul class="comments">
+                    <li>I am from Dhaka</li>
+                    <li>Give me some sunshine</li>
+                </ul>
+                <div class="add-comment clearfix">
+                    <input type="text" placeholder="Add your comment">
+                    <a href="#">Post</a>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+    
+    <div class="optional">
+        <div class="profile clearfix">
+            <div class="photo-box">
+                <img src="steins_gate.jpg" alt="fa" class="photo">
+            </div>
+            <div class="name">
+                <a href="#">Rigan</a>
+            </div>
+        </div>
+        <div class="suggestions">
+            <div class="header clearfix">
+                <div class="suggested">Suggested For You</div>
+                <div class="see-all"><a href="#">See all</a></div>
+            </div>
+            <div class="body">
+                <div class="person clearfix">
+                    <div class="photo-box">
+                        <img src="Wallpaper.jpg" class="photo">
+                    </div>
+                    <div class="name">
+                        <a href="#">Name</a>
+                    </div>
+                    <div class="follow">
+                        <a href="#">Follow</a>
+                    </div>
+                </div>
+                <div class="person clearfix">
+                    <div class="photo-box">
+                        <img src="Wallpaper.jpg" class="photo">
+                    </div>
+                    <div class="name">
+                        <a href="#">Name</a>
+                    </div>
+                    <div class="follow">
+                        <a href="#">Follow</a>
+                    </div>
+                </div>
+                <div class="person clearfix">
+                    <div class="photo-box">
+                        <img src="Wallpaper.jpg" class="photo">
+                    </div>
+                    <div class="name">
+                        <a href="#">Name</a>
+                    </div>
+                    <div class="follow">
+                        <a href="#">Follow</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

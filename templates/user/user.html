@@ -1,0 +1,65 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+{% include 'navbar.html'%}
+
+<div class="user-profile">
+    <div class="profile-info clearfix">
+      <div class="profile-photo">
+        <div class="profile-photo-box">
+          <img src="{{ profile_pic }}" alt="">
+        </div>
+      </div>
+      <div class="profile-about">
+          <div class="profile-username">
+            {{ username }}
+          </div>
+          <div class="profile-count">
+            <ul>
+              <li>{{post_count}} posts</li>
+              <li>{{follower}} follower</li>
+              <li>{{following}} following</li>
+            </ul>
+          </div>
+          <div class="profile-name">
+            {{name}}
+          </div>
+          <div class="profile-another-link">
+              <a href="{{ facebook_link }}"><i class="fa fa-facebook"></i></a>
+              <a href="{{ twitter_link }}"><i class="fa fa-twitter"></i></a>
+          </div>
+          {%if observer_id != user_id %}
+            <div class="follow-button">
+              <form action="{% url 'profile' user_id%}" method="POST">
+                {% csrf_token %}
+                {% if msg == "Follow"%}
+                  <input type="submit" name="submit" value="Follow">
+                {% else %}
+                  <input type="submit" name="submit" value="Unfollow">
+                {% endif %}
+              </form>
+            </div>
+          {% endif %}
+      </div>
+    </div>
+
+    <div class="profile-nav">
+      <ul>
+        <li><a href="#">Posts</a></li>
+        {% if observer_id == user_id %}
+          <li><a href="#">Following</a></li>
+          <li><a href="#">Follower</a></li>
+          <li><a href="#">Archive</a></li>
+          <li><a href="{% url 'edit-profile' %}">Edit profile</a></li>
+        {% endif %}
+        
+      </ul>
+    </div>
+
+
+
+</div>
+
+
+{% endblock%}
