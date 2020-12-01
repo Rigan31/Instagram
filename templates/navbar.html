@@ -9,8 +9,11 @@
         </div>
         <div class="col span-1-of-3">
             <div class="search-box">
-                <a href="#"><i class="fa fa-search"></i></a>
-                <input type="search" placeholder="Search">
+                <form action="{% url 'search' %}">
+                    <input type="search" placeholder="Search" name="search">
+                    <button type="submit"><i class="fa fa-search"></i></a>
+                </form>
+                
             </div>
         </div>
         <div class="col span-1-of-3">
@@ -19,7 +22,7 @@
                     <a href="{% url 'index'%}"><i class="fa fa-home icon"></i></a>
                 </li>
                 <li>
-                    <a href="{% url 'post'%}"><i class="fa fa-plus icon"></i></a>
+                    <a href="{% url 'create-post'%}"><i class="fa fa-plus icon"></i></a>
                 </li>
                 <li>
                     <a href="{% url 'create-story'%}"><i class="fa fa-plus icon"></i></a>

@@ -9,24 +9,15 @@
 <div class="main-part clearfix">
     <div class="post-and-story">
         <div class="stories">
-            <div class="story">
-                <img src="steins_gate.jpg" class="story-photo">
-            </div>
-            <div class="story">
-                <img src="aot.png" class="story-photo">
-            </div>
-            <div class="story">
-                <img src="Wallpaper.jpg" class="story-photo">
-            </div>
-            <div class="story">
-                <img src="aot.png" class="story-photo">
-            </div>
-            <div class="story">
-                <img src="aot.png" class="story-photo">
-            </div>
-            <div class="story">
-                <img src="Wallpaper.jpg" class="story-photo">
-            </div>
+            {% for story in stories %}
+                <div class="story">
+                    <img src="{{ story.story_path }}" class="story-photo" onclick="modalTheimage(this, '{{story.story_path}}')">
+                    <div id="myModal" class="modal">
+                        <span class="close" onclick="closeThemodal(this)">&times;</span>
+                        <img class="modal-content" id="img01">
+                      </div>
+                </div>
+            {% endfor %}
         </div>
 
         {% for post in posts %}
@@ -66,16 +57,16 @@
                 {% csrf_token %}
                 <ul class="icons clearfix">
                     {% if post.isLike %}
-                        <li><i class="fa fa-heart" aria-hidden="true" onclick="likes({{user_id}}, {{post.post_id}}, this)"></i></li>
+                        <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
                     {% else %}
-                        <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes({{user_id}}, {{post.post_id}}, this)"></i></li>
+                        <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
                     {% endif %}
                     <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
                     <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
                     {% if post.isSave %}
-                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved({{user_id}}, {{post.post_id}}, this)"></i></li>
+                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
                     {% else %}
-                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved({{user_id}}, {{post.post_id}}, this)"></i></li>
+                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
                     {% endif %}
                     
                 </ul>
@@ -99,10 +90,10 @@
     <div class="optional">
         <div class="profile clearfix">
             <div class="photo-box">
-                <img src="steins_gate.jpg" alt="fa" class="photo">
+                <img src="{{ user_photo }}" alt="fa" class="photo">
             </div>
             <div class="name">
-                <a href="#">Rigan</a>
+                <a href="{% url 'profile' user_id %}">{{ name }}</a>
             </div>
         </div>
         <div class="suggestions">

@@ -95,18 +95,40 @@ def collectVideos(post_id):
     return videos
 
 
-def index(request):
-    if 'user_id' not in request.session:
-        return redirect('login')
-    user_id = request.session['user_id']
+def getStories(user_id):
     cursor = connection.cursor()
-
-    ####################### Story #####################
     sql = "SELECT * FROM STORY WHERE (USER_ID = %s OR USER_ID = ANY(SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s)) AND TRUNC(SYSDATE-DATE_OF_STORY) < 1 ORDER BY DATE_OF_STORY DESC;"
     cursor.execute(sql, [user_id, user_id])
     all_stories = cursor.fetchall()
 
-    ###################################################
+    stories = []
+
+    for story in all_stories:
+        story_id = story[0]
+        story_path = story[1]
+        creation_time = story[2]
+        storier_id = story[3]
+
+        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql, [storier_id])
+        storier_info = cursor.fetchone()
+        storier_name = storier_info[0]
+        storier_photo = storier_info[1]
+
+        row = {
+            'story_path': story_path,
+            'creatoin_time': creation_time,
+            'storier_id': storier_id,
+            'storier_name': storier_name,
+            'storier_photo': storier_photo,
+        }
+        stories.append(row)
+
+    return stories
+
+def getPosts(user_id):
+    cursor = connection.cursor()
+
     sql = "SELECT * FROM POSTS WHERE USER_ID = %s OR USER_ID = ANY (SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s) ORDER BY CREATION_DATE DESC;"
     cursor.execute(sql, [user_id, user_id])
     result = cursor.fetchall()
@@ -121,7 +143,6 @@ def index(request):
         visibility = r[4]
         poster_id = r[5]
 
-        cursor = connection.cursor()
         sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
         cursor.execute(sql, [poster_id])
         poster_info = cursor.fetchone()
@@ -143,16 +164,34 @@ def index(request):
                 'videos': collectVideos(post_id),
             }
         posts.append(row)
+    
+    return posts
+
+
+
+
+def index(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+    user_id = request.session['user_id']
+    cursor = connection.cursor()
+    sql = "SELECT PROFILE_PIC, NAME FROM USERDATA WHERE ID =%s;"
+    cursor.execute(sql, [user_id])
+    user_info = cursor.fetchone()
+    cursor.close()
 
     context = {
-        'posts': posts,
+        'posts': getPosts(user_id),
+        'stories': getStories(user_id),
         'user_id': user_id,
+        'user_photo': user_info[0],
+        'name': user_info[1],
     }
 
     return render(request, 'pages/index.html', context)
     
 
-def post(request):
+def create_post(request):
     img_extension = [".jpg", ".jpeg", ".png"]
     video_extension = [".mp4", ".avi", ".mov", ".webm", ".mkv", ".gif"]
     user_id = request.session['user_id']
@@ -203,8 +242,9 @@ def post(request):
         'name': poster[0],
         'photo': poster[1]
     }
+    return redirect('index')
 
-    return render(request, 'pages/post.html', context)
+    return render(request, 'pages/create-post.html', context)
 
 
 def create_story(request):
@@ -229,12 +269,12 @@ def create_story(request):
     }
     return render(request, 'pages/create-story.html', context)
 
+
 def likes(request):
     if request.is_ajax:
         user_id = request.POST['user_id']
         post_id = request.POST['post_id']
 
-        print(user_id, post_id)
         cursor = connection.cursor()
 
         if isLike(user_id, post_id):
@@ -266,4 +306,153 @@ def saved(request):
         
         cursor.close()
         return JsonResponse({})
+
+def isFollowee(user_id, searchee_id):
+    cursor = connection.cursor()
+    sql = "SELECT COUNT(*) FROM FOLLOW WHERE FOLLOWER_ID = %s AND FOLLOWEE_ID = %s;"
+    cursor.execute(sql, [user_id, searchee_id])
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result[0] == 0:
+        return False
+    else:
+        return True
+
+def isFollower(user_id, searchee_id):
+    cursor = connection.cursor()
+    sql = "SELECT COUNT(*) FROM FOLLOW WHERE FOLLOWER_ID = %s AND FOLLOWEE_ID = %s;"
+    cursor.execute(sql, [searchee_id, user_id])
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result[0] == 0:
+        return False
+    else:
+        return True
+
+
+def searchUsers(user_id, value):
+    cursor = connection.cursor()
+    value = value.lower()
+    almostValue = '%'+value+'%'
+
+    sql = "SELECT ID, NAME, PROFILE_PIC FROM USERDATA WHERE LOWER(NAME) LIKE %s OR LOWER(USERNAME) LIKE %s;"
+    cursor.execute(sql, [almostValue, almostValue])
+    result = cursor.fetchall()
+    cursor.close()
+
+    search_users = []
+    for r in result:
+        row = {
+            'searchee_id': r[0],
+            'searchee_name': r[1],
+            'searchee_photo': r[2],
+            'isFollowee': isFollowee(user_id, r[0]),
+            'isFollower': isFollower(user_id, r[0]),
+        }
+        search_users.append(row)
+    
+    return search_users
+
+
+def searchPosts(user_id, value): 
+    cursor = connection.cursor()
+    value = value[1:]
+    value = value.lower()
+    almostValue = '%'+value+'%'
+            
+    sql = "SELECT * FROM POSTS WHERE ID = ANY(SELECT POST_ID FROM POST_TAG WHERE TAG_ID = ANY(SELECT ID FROM TAGS WHERE LOWER(TAG_NAME) LIKE %s)) ORDER BY CREATION_DATE DESC;"
+    cursor.execute(sql, [almostValue])
+    result = cursor.fetchall()
+
+    print(result)
+            
+    search_posts = []
+    for r in result:
+        post_id = r[0]
+        print(r[0])
+        creation_time = r[1]
+        caption = r[2]
+        update_time = r[3]
+        visibility = r[4]
+        poster_id = r[5]
+
+        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql, [poster_id])
+        poster_info = cursor.fetchone()
+        poster_name = poster_info[0]
+        poster_photo = poster_info[1]
+
+        row = { 
+                'creation_time': creation_time,
+                'caption': caption,
+                'update_time': update_time,
+                'poster_name': poster_name,
+                'poster_photo': poster_photo,
+                'photos': collectphotos(post_id),
+                'post_id': post_id,
+                'poster_id': poster_id,
+                'total_likes': totalLikes(post_id),
+                'isLike': isLike(user_id, post_id),
+                'isSave': isSave(user_id, post_id),
+                'videos': collectVideos(post_id),
+            }
+        search_posts.append(row)
+    
+    return search_posts
+
+
+def search(request):
+    user_id = request.session['user_id']
+    if request.method == 'GET':
+        value = request.GET['search']
+
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        cursor = connection.cursor()
+        sql = "INSERT INTO SEARCH(NAME, DATE_OF_SEARCH, USER_ID) VALUES(%s, %s, %s);"
+        cursor.execute(sql, [value, timestamp, user_id])
+        cursor.close()
+
+        search_users = []
+        search_posts = []
+
+        if value[0] == '#':
+            search_posts = searchPosts(user_id, value)
+        else:
+            search_users = searchUsers(user_id, value)
+
+        context = {
+            'search_posts': search_posts,
+            'search_users': search_users,
+            'user_id': user_id,
+        }
+
+        return render(request, 'pages/search.html', context)
+               
+def follow(request):
+    if request.is_ajax:
+        user_id = request.POST['user_id']
+        followee_id = request.POST['followee_id']
+        msg = request.POST['msg']
+
+        cursor = connection.cursor()
+        newMsg = ""
+
+        if msg == 'Unfollow':
+            sql = "DELETE FROM FOLLOW WHERE FOLLOWER_ID = %s AND FOLLOWEE_ID = %s;"
+            cursor.execute(sql, [user_id, followee_id])
+
+            sql = "SELECT COUNT(*) FROM FOLLOW WHERE FOLLOWER_ID =%s AND FOLLOWEE_ID = %s;"
+            cursor.execute(sql, [followee_id, user_id])
+            result = cursor.fetchone()
+            if result[0] == 0:
+                newMsg = "Follow"
+            else:
+                newMsg = "Follow back"
+        else:
+            sql = "INSERT INTO FOLLOW VALUES(%s, %s);"
+            cursor.execute(sql, [user_id, followee_id])
+            newMsg = "Unfollow"
         
+        return JsonResponse({'newMsg': newMsg})
