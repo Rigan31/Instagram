@@ -232,6 +232,8 @@ def create_post(request):
                 sql = "INSERT INTO VIDEOS(VIDEO_PATH, POST_ID) VALUES(%s, %s);"
                 cursor.execute(sql, [file_url, post_id])
 
+        return redirect('index')
+        
     sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
     cursor.execute(sql, [user_id])
     poster = cursor.fetchone()
@@ -242,7 +244,6 @@ def create_post(request):
         'name': poster[0],
         'photo': poster[1]
     }
-    return redirect('index')
 
     return render(request, 'pages/create-post.html', context)
 

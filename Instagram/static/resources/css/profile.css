@@ -70,3 +70,20 @@
     margin-right: 20px;
   }
   
+.user-post{
+  width: 40%;
+  margin: 30px auto;
+}
+
+.user-following{
+  width: 40%;
+  margin: 30px auto;
+}
+
+.following{
+  padding: 5px;
+}
+.user-follower{
+  width: 40%;
+  margin: 30px auto;
+}

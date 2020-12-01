@@ -1,0 +1,58 @@
+{% load static %}
+
+<div class="user-profile">
+    <div class="profile-info clearfix">
+      <div class="profile-photo">
+        <div class="profile-photo-box">
+          <img src="{{ base.profile_pic }}" alt="">
+        </div>
+      </div>
+      <div class="profile-about">
+          <div class="profile-username">
+            {{ base.username }}
+          </div>
+          <div class="profile-count">
+            <ul>
+              <li>{{base.post_count}} posts</li>
+              <li>{{base.follower}} follower</li>
+              <li>{{base.following}} following</li>
+            </ul>
+          </div>
+          <div class="profile-name">
+            {{base.name}}
+          </div>
+          <div class="profile-another-link">
+              <a href="{{ base.facebook_link }}"><i class="fa fa-facebook"></i></a>
+              <a href="{{ base.twitter_link }}"><i class="fa fa-twitter"></i></a>
+          </div>
+          {%if base.observee_id != user_id %}
+            <div class="follow-button">
+              <form action="{% url 'profile' user_id%}" method="POST">
+                {% csrf_token %}
+                {% if base.msg == "Follow"%}
+                  <input type="submit" name="submit" value="Follow">
+                {% else %}
+                  <input type="submit" name="submit" value="Unfollow">
+                {% endif %}
+              </form>
+            </div>
+          {% endif %}
+      </div>
+    </div>
+
+    <div class="profile-nav">
+      <ul>
+        <li><a href="{% url 'profile' base.observee_id%}">Posts</a></li>
+        {% if base.observee_id == user_id %}
+          <li><a href="{% url 'following' base.observee_id%}">Following</a></li>
+          <li><a href="{% url 'follower' base.observee_id%}">Follower</a></li>
+          <li><a href="#">Archive</a></li>
+          <li><a href="{% url 'edit-profile' %}">Edit profile</a></li>
+        {% endif %}
+        
+      </ul>
+    </div>
+
+
+
+</div>

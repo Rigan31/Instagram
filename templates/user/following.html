@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+{% include 'user/base_user.html' %}
+
+<div class="user-following">
+    {% for following in user_following %}
+        <div class="following">
+            {{following.name}}
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
