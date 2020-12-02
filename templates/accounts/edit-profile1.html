@@ -1,0 +1,90 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+
+<div class="edit-profile">
+    <div class="about-you">
+        <h3>About you</h3>
+        <p>Tell us who you are! You can modify your personal information here.</p>
+    </div>
+    <div class="edit-profile-body">
+        <form action="{% url 'edit-profile'%}" method="POST" enctype="multipart/form-data"  class="edit-profile-form">
+            {% csrf_token %}
+            <div class="form-element">
+                <label for="name">Name</label>
+                <input type="text" name="name" value="{{ name }}" required>
+            </div>
+            <div class="form-element">
+                <label for="username">Username</label>
+                <input type="text" name="username" value="{{ username }}" required>
+            </div>
+
+            <div class="form-element">
+                <label for="email">Email</label>
+                <input type="email" name="email" value="{{ email }}" required>
+            </div>
+
+            <div class="form-element">
+                <label for="phone-number">Phone number</label>
+                <input type="text" name="phone-number" value="{{phone_number}}">
+            </div>
+            
+            <div class="form-element">
+                <label for="birthday">Birthday</label>
+                <input type="date" name="birthday" value="{{birthday}}">
+            </div>
+
+            <div class="form-element">
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender">
+                    {% if gender == 'Male' %}
+                        <option value="Male" selected='selected'>Male</option>
+                    {% else %}
+                        <option value="Male">Male</option>
+                    {% endif %}
+                    {% if gender == 'Female' %}
+                        <option value="Female" selected='selected'>Female</option>
+                    {% else %}
+                        <option value="Female">Female</option>
+                    {% endif %}
+                    {% if gender == 'Other' %}
+                        <option value="Other" selected='selected'>Other</option>
+                    {% else %}
+                        <option value="Other">Other</option>
+                    {% endif %}
+                </select>
+            </div>
+
+            <div class="form-element">
+                <label for="profile_photo">Change Profile Photo</label>
+                <input type="file"  name="profile_photo">
+            </div>
+
+            
+
+            <div class="form-element">
+                <label for="password">Password</label>
+                <input type="password" name="password" value="{{password}}" required>
+            </div>
+
+            <div class="form-element">
+                <label for="facebook">Facebook link</label>
+                <input type="url" name="facebook" value="{{facebook_link}}">
+            </div>
+
+            <div class="form-element">
+                <label for="twitter">Twitter link</label>
+                <input type="url" name="twitter" value="{{ twitter_link }}">
+            </div>
+
+            <div class="form-element-button">
+                <input type="submit"  value="Submit" class="edit-profile-submit" disabled>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

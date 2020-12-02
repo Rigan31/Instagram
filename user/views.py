@@ -64,7 +64,6 @@ def collectVideos(post_id):
 
 
 
-
 def base_profile(request, user_id, observer_id):
     cursor = connection.cursor()
 

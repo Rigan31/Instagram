@@ -75,3 +75,9 @@ function modalTheimage(x, story_path){
 function closeThemodal(x) { 
     x.parentElement.style.display = "none";
 }
+
+$(document).ready(function() {
+  $('.edit-profile-form').on('input change', function() {
+    $('.edit-profile-submit').attr('disabled', false);
+  });
+})
