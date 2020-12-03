@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db import connection
 from django.http import HttpResponse
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -180,6 +181,30 @@ def profile(request, user_id):
     }
     return render(request, 'user/user.html', context)
 
+def isFollowee(user_id, searchee_id):
+    cursor = connection.cursor()
+    sql = "SELECT COUNT(*) FROM FOLLOW WHERE FOLLOWER_ID = %s AND FOLLOWEE_ID = %s;"
+    cursor.execute(sql, [user_id, searchee_id])
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result[0] == 0:
+        return False
+    else:
+        return True
+
+def isFollower(user_id, searchee_id):
+    cursor = connection.cursor()
+    sql = "SELECT COUNT(*) FROM FOLLOW WHERE FOLLOWER_ID = %s AND FOLLOWEE_ID = %s;"
+    cursor.execute(sql, [searchee_id, user_id])
+    result = cursor.fetchone()
+    cursor.close()
+
+    if result[0] == 0:
+        return False
+    else:
+        return True
+
 def user_following(user_id, observer_id):
     if user_id == observer_id:
         cursor = connection.cursor()
@@ -195,6 +220,9 @@ def user_following(user_id, observer_id):
             row = {
                 'name': info[0],
                 'profile_photo': info[1],
+                'isFollowee': isFollowee(user_id, r[0]),
+                'isFollower': isFollower(user_id, r[0]),
+                'id': r[0],
             }
             following.append(row)
         cursor.close()
@@ -216,6 +244,9 @@ def user_follower(user_id, observer_id):
             row = {
                 'name': info[0],
                 'profile_photo': info[1],
+                'isFollowee': isFollowee(user_id, r[0]),
+                'isFollower': isFollower(user_id, r[0]),
+                'id': r[0],
             }
             follower.append(row)
         cursor.close()
@@ -235,7 +266,35 @@ def follower(request, user_id):
     observer_id = request.session['user_id']
     context = {
         'base': base_profile(request, user_id, observer_id),
-        'user_following': user_follower(user_id, observer_id),
+        'user_follower': user_follower(user_id, observer_id),
         'user_id': observer_id,
     }
-    return render(request, 'user/following.html', context)
+    return render(request, 'user/follower.html', context)
+
+def follow_button(request, user_id):
+    print("hoy na kn")
+    if request.is_ajax:
+        user_id = request.POST['user_id']
+        followee_id = request.POST['followee_id']
+        msg = request.POST['msg']
+
+        cursor = connection.cursor()
+        newMsg = ""
+
+        if msg == 'Unfollow':
+            sql = "DELETE FROM FOLLOW WHERE FOLLOWER_ID = %s AND FOLLOWEE_ID = %s;"
+            cursor.execute(sql, [user_id, followee_id])
+
+            sql = "SELECT COUNT(*) FROM FOLLOW WHERE FOLLOWER_ID =%s AND FOLLOWEE_ID = %s;"
+            cursor.execute(sql, [followee_id, user_id])
+            result = cursor.fetchone()
+            if result[0] == 0:
+                newMsg = "Follow"
+            else:
+                newMsg = "Follow back"
+        else:
+            sql = "INSERT INTO FOLLOW VALUES(%s, %s);"
+            cursor.execute(sql, [user_id, followee_id])
+            newMsg = "Unfollow"
+        
+        return JsonResponse({'newMsg': newMsg})

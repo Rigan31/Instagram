@@ -8,22 +8,31 @@
 
 <div class="Create-post">
         <div class="post-header">
-                <h1>Create a Post</h1>
+                <h2>Create post</h2>
         </div>
-        <div class="poster clearfix">
+        <div class="poster clearfix poster-no-border">
                 <div class="photo-box">
                         <img src="{{ photo }}" alt="identity" class="photo">
                 </div>
-                <div class="name">
+                <div class="name create-post-name">
                         {{name}}
                 </div>
         </div>
 
-        <form method="POST" action="{% url 'create-post'%}" enctype="multipart/form-data">
+        <form method="POST" action="{% url 'create-post'%}" enctype="multipart/form-data" class="create-post-form">
                 {% csrf_token %}
-                <textarea name="caption" placeholder="What's on your mind?"></textarea>
-                <input name="file" class="file" type='file' multiple />
-                <input class="button" type="submit" value="Add to your post">
+                <textarea name="caption" placeholder="What's on your mind?" class="create-post-caption"></textarea>
+                <div class="create-post-upload">
+                        <div class="create-post-upload-image">
+                                
+                        </div>
+                        <div class="create-post-upload-video">
+                                
+                        </div>
+                </div>
+                <label for="file" class="create-post-label"> <i class="fa fa-cloud-upload"></i>Add to your post</label>
+                <input id="file" name="file" class="file" type='file' multiple style="display: none;" onchange="previewPostUpload(event)"/>
+                <input class="create-post-button" type="submit" value="Post">
         </form>
 </div>
 

@@ -11,11 +11,14 @@
         <div class="stories">
             {% for story in stories %}
                 <div class="story">
-                    <img src="{{ story.story_path }}" class="story-photo" onclick="modalTheimage(this, '{{story.story_path}}')">
-                    <div id="myModal" class="modal">
-                        <span class="close" onclick="closeThemodal(this)">&times;</span>
-                        <img class="modal-content" id="img01">
-                      </div>
+                        <img src="{{ story.story_path }}" class="story-photo" onclick="modalTheimage(this, '{{story.story_path}}')">
+                        <div id="myModal" class="modal">
+                            <span class="close" onclick="closeThemodal(this)">&times;</span>
+                            <img class="modal-content" id="img01">
+                        </div>
+                        <div class="storier_photo">
+                            <a href="{% url 'profile' story.storier_id%}"><img src="{{ story.storier_photo }}"></a>
+                        </div>
                 </div>
             {% endfor %}
         </div>

@@ -7,13 +7,17 @@
 {% include 'navbar.html'%}
 
 <div class="Create-story">
-        <div class="create-story-header">
-                <h1>Create a story</h1>
+        <div class="post-header">
+                <h1>Create story</h1>
         </div>
         <form method="POST" action="{% url 'create-story'%}" enctype="multipart/form-data">
             {% csrf_token %}
-            <input name="file" class="file" type='file' multiple />
-            <input class="button" type="submit" value="Add to your story">
+            <div class="create-post-upload-image">
+                                
+            </div>
+            <label for="file" class="create-post-label"> <i class="fa fa-cloud-upload"></i>Add to your Story</label>
+            <input id="file" name="file" class="file" type='file' style="display: none;" onchange="previewPostUpload(event)"/>
+            <input class="create-post-button" type="submit" value="Submit">
         </form>
 </div>
 

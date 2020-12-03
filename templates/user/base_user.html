@@ -27,7 +27,7 @@
           </div>
           {%if base.observee_id != user_id %}
             <div class="follow-button">
-              <form action="{% url 'profile' user_id%}" method="POST">
+              <form action="{% url 'profile' base.observee_id%}" method="POST">
                 {% csrf_token %}
                 {% if base.msg == "Follow"%}
                   <input type="submit" name="submit" value="Follow">

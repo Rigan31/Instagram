@@ -8,95 +8,98 @@
 <!--Body-->
 
 <div class="search-body">
-    {% for post in search_posts %}
-        <div class="post">
-            <div class="poster clearfix">
-                <div class="photo-box">
-                    <a href="{% url 'profile' post.poster_id %}"><img src="{{ post.poster_photo }}" alt="identity" class="photo"></a>
-                </div>
-                
-                <div class="name">
-                    <a href="{% url 'profile' post.poster_id %}">{{post.poster_name}}</a>
-                </div>
-            </div>
-
-            <div class="caption">
-                {{post.caption}}
-            </div>
-            
-            {% for photo in post.photos %}
-                <div class="media">
-                    <img src="{{ photo }}" class="post-photo">
-                </div>
-            {% endfor %}
-
-            {% for video in post.videos %}
-                <div class="media">
-                    <video src="{{ video }}" class="post-video" controls></video>
-                </div>
-            {% endfor %}
-            
-            <!--div class="media">
-                <script type="text/javascript">
-                    loadPostimage({{post.photos}})
-                </script>
-            </div-->
-            
-            {% csrf_token %}
-            <ul class="icons clearfix">
-                {% if post.isLike %}
-                    <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
-                {% else %}
-                    <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
-                {% endif %}
-                <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
-                <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
-                {% if post.isSave %}
-                    <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
-                {% else %}
-                    <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
-                {% endif %}
-                
-            </ul>
-            <div class="text">
-                <p class="total_likes">{{post.total_likes}} likes</p>
-                <p>View all 2 comments</p>
-            </div>
-            <ul class="comments">
-                <li>I am from Dhaka</li>
-                <li>Give me some sunshine</li>
-            </ul>
-            <div class="add-comment clearfix">
-                <input type="text" placeholder="Add your comment">
-                <a href="#">Post</a>
-            </div>
-        </div>
-    {% endfor %}
-
-    {% for user in search_users %}
-        <div class="search_users">
-            <div class="searchee_info">
+    <div class="search-users-post">
+        {% for post in search_posts %}
+            <div class="post">
                 <div class="poster clearfix">
                     <div class="photo-box">
-                        <a href="{% url 'profile' user.searchee_id %}"><img src="{{ user.searchee_photo }}" alt="identity" class="photo"></a>
+                        <a href="{% url 'profile' post.poster_id %}"><img src="{{ post.poster_photo }}" alt="identity" class="photo"></a>
                     </div>
                     
                     <div class="name">
-                        <a href="{% url 'profile' user.searchee_id %}">{{ user.searchee_name }}</a>
+                        <a href="{% url 'profile' post.poster_id %}">{{post.poster_name}}</a>
                     </div>
                 </div>
+
+                <div class="caption">
+                    {{post.caption}}
+                </div>
+                
+                {% for photo in post.photos %}
+                    <div class="media">
+                        <img src="{{ photo }}" class="post-photo">
+                    </div>
+                {% endfor %}
+
+                {% for video in post.videos %}
+                    <div class="media">
+                        <video src="{{ video }}" class="post-video" controls></video>
+                    </div>
+                {% endfor %}
+                
+                <!--div class="media">
+                    <script type="text/javascript">
+                        loadPostimage({{post.photos}})
+                    </script>
+                </div-->
+                
+                {% csrf_token %}
+                <ul class="icons clearfix">
+                    {% if post.isLike %}
+                        <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                    {% else %}
+                        <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                    {% endif %}
+                    <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
+                    <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
+                    {% if post.isSave %}
+                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                    {% else %}
+                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                    {% endif %}
+                    
+                </ul>
+                <div class="text">
+                    <p class="total_likes">{{post.total_likes}} likes</p>
+                    <p>View all 2 comments</p>
+                </div>
+                <ul class="comments">
+                    <li>I am from Dhaka</li>
+                    <li>Give me some sunshine</li>
+                </ul>
+                <div class="add-comment clearfix">
+                    <input type="text" placeholder="Add your comment">
+                    <a href="#">Post</a>
+                </div>
             </div>
-            {%csrf_token%}
-            {% if user_id != user.searchee_id %}
-                {% if user.isFollowee %}
-                    <button onClick="follow(this, '{{ user_id}}', '{{ user.searchee_id }}')">Unfollow</button>
-                {% elif user.isFollower %}
-                    <button onClick="follow(this, {{ user_id}}, '{{ user.searchee_id }}')">Follow back</button>
-                {% else %}
-                    <button onClick="follow(this, {{ user_id}}, {{ user.searchee_id }})">Follow</button>
-                {% endif %}
-            {% endif %}
+        {% endfor %}
+    </div>
+    
+    <div class="search-users-body">
+    {% for user in search_users %}
+        <div class="search_users">
+                <div class="searchee_info clearfix">
+                    <div class="searchee_photo">
+                        <a href="{% url 'profile' user.searchee_id %}"><img src="{{ user.searchee_photo }}" alt="identity"></a>
+                    </div>
+                    <div class="searchee_name">
+                        <a href="{% url 'profile' user.searchee_id %}">{{ user.searchee_name }}</a>
+                    </div>
+                    <div class="searchee_follow">
+                        {%csrf_token%}
+                        {% if user_id != user.searchee_id %}
+                            {% if user.isFollowee %}
+                                <button onClick="follow(this, '{{ user_id}}', '{{ user.searchee_id }}')">Unfollow</button>
+                            {% elif user.isFollower %}
+                                <button onClick="follow(this, '{{ user_id}}', '{{ user.searchee_id }}')">Follow back</button>
+                            {% else %}
+                                <button onClick="follow(this, '{{ user_id}}', '{{ user.searchee_id }}')">Follow</button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
         </div>
     {% endfor %}
+    </div>
 </div>
 {% endblock %}

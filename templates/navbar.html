@@ -19,22 +19,37 @@
         <div class="col span-1-of-3">
             <ul class="main-nav">
                 <li>
-                    <a href="{% url 'index'%}"><i class="fa fa-home icon"></i></a>
+                    <div class="nav-icon-circle nav-menu-active">
+                        <a href="{% url 'index'%}"><i class="fa fa-home icon"></i></a>
+                    </div>
                 </li>
                 <li>
-                    <a href="{% url 'create-post'%}"><i class="fa fa-plus icon"></i></a>
+                    <div class="nav-icon-circle">
+                        <div class="dropdown">
+                            <i onclick="showDropDown(this)" class="fa fa-plus icon dropdown-icon icon"></i>
+                            <div class="dropdown-content">
+                                <a href="{% url 'create-post'%}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Post</a>
+                                <a href="{% url 'create-story'%}"><i class="fa fa-file-image-o" aria-hidden="true"></i></i>Story</a>
+                            </div>
+                        </div>
+                    </div>
                 </li>
                 <li>
-                    <a href="{% url 'create-story'%}"><i class="fa fa-plus icon"></i></a>
+                    <div class="nav-icon-circle">
+                        <a href="#"><i class="fa fa-bell icon"></i></a>
+                    </div>
                 </li>
                 <li>
-                    <a href="#"><i class="fa fa-bell icon"></i></a>
-                </li>
-                <li>
-                    <a href="{% url 'profile' user_id %}"><i class="fa fa-user"></i></a>
-                </li>
-                <li>
-                    <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i></a>
+                    <div class="nav-icon-circle">
+                        <div class="dropdown">
+                            <i onclick="showDropDown(this)" class="fa fa-caret-down dropdown-icon icon"></i>
+                            <div class="dropdown-content">
+                                <a href="{% url 'profile' user_id %}"><i class="fa fa-user-circle-o" aria-hidden="true"></i>Profile</a>
+                                <a href="{% url 'edit-profile'%}"><i class="fa fa-cog" aria-hidden="true"></i></i>Settings</a>
+                                <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Log Out</a>
+                            </div>
+                        </div>
+                    </div>
                 </li>
             </ul>
         </div>

@@ -5,10 +5,29 @@
 {% include 'navbar.html' %}
 {% include 'user/base_user.html' %}
 
-<div class="user-follower">
+<div class="search-users-body">
     {% for follower in user_follower %}
-        <div class="follower">
-            {{follower.name}}
+        <div class="search_users">
+                <div class="searchee_info clearfix">
+                    <div class="searchee_photo">
+                        <a href="{% url 'profile' follower.id %}"><img src="{{ follower.profile_photo }}" alt="identity"></a>
+                    </div>
+                    <div class="searchee_name">
+                        <a href="{% url 'profile' follower.id %}">{{ follower.name }}</a>
+                    </div>
+                    <div class="searchee_follow">
+                        {%csrf_token%}
+                        {% if user_id != user.searchee_id %}
+                            {% if user.isFollowee %}
+                                <button onClick="follow(this, '{{ user_id}}', '{{ user.searchee_id }}')">Unfollow</button>
+                            {% elif user.isFollower %}
+                                <button onClick="follow(this, '{{ user_id}}', '{{ user.searchee_id }}')">Follow back</button>
+                            {% else %}
+                                <button onClick="follow(this, '{{ user_id}}', '{{ user.searchee_id }}')">Follow</button>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
         </div>
     {% endfor %}
 </div>
