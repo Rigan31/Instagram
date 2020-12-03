@@ -364,3 +364,133 @@ nav{
 .nav-menu-active .icon{
     color: rgb(24,119,242);
 }
+
+/*My change 1: showing liked user lists*/
+
+.like_list_show_button{
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline
+}
+
+.like_list_container{
+    background: rgba(0,0,0,0);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    justify-content: center;
+    align-content: center;
+    display: none;
+}
+
+.like_list_inner_container{
+    position: fixed;
+    top: 27%;
+    height: 400px;
+    width: 22%;
+    border-radius: 24px;
+    position: fixed;
+    min-width: 400px;
+    background-color: white;
+    border: 2px solid black;
+    overflow: hidden;
+}
+
+.like_list_inner_container hr{
+    margin: 0px
+}
+
+.like_list_top_bar{;
+    height: 45px;
+    padding: 10px 5px 5px 5px;
+    border-radius: 24px;
+    text-align: center;
+    width: 100%;
+}
+
+.like_list_top_bar h2{
+    align-content: center;
+}
+
+.like_list_top_bar img{
+    float: right;
+    height: 37px;
+    width: 39px;
+    border-radius: 70%;
+    cursor: pointer;
+    margin-top: -32px;
+    margin-right: 2px;
+}
+
+.like_list_content{
+    height: 88%;
+    overflow-y: auto;
+    border-radius: 24px;
+    padding-bottom: 5px;
+}
+
+.list_of_liked_users{
+
+}
+
+.list_of_liked_users li {
+    list-style-type: none;
+}
+
+.list_of_liked_users li div {
+    width: 94%;
+    height: 55px;
+    margin: 5px 4px 0px 10px;
+    padding-top: 3px;
+}
+
+.user_list_image_link{
+    float: left;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.user_list_username_link{
+    color: black;
+    text-decoration: none;
+    font-size: 16px;
+    padding-left: 12px;
+}
+
+.list_of_liked_users li div a:hover{
+    text-decoration: underline;
+}
+
+.list_of_liked_users li div p{
+    color: gray;
+    text-decoration: none;
+    font-size: 16px;
+    margin-left: 62px;
+}
+
+.list_of_liked_users li div img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.follow_button_in_list{
+    background-color: #0095f6;
+    border-radius: 8px;
+    padding: 7px;
+    color: white;
+    font-size: 16px;
+    margin-top: -38px;
+    float: right;
+}
+
+/*My change 1 end*/

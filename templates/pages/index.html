@@ -1,5 +1,5 @@
 {% extends 'base.html'%}
-
+{% load static%}
 {% block content %}
 
 <!--Navbar-->
@@ -73,10 +73,37 @@
                     {% endif %}
                     
                 </ul>
+
+                <!--MY change 1: showing liked user list-->
+
                 <div class="text">
-                    <p class="total_likes">{{post.total_likes}} likes</p>
+                    <button class="like_list_show_button" id="like_list_show_button" onclick="like_list('{{ user_id }}','{{ post.post_id }}', this)" >{{ post.total_likes }} likes</button>
                     <p>View all 2 comments</p>
                 </div>
+
+                <div class="like_list_container" id="like_list_container" onclick="close_list()">
+                    <div class="like_list_inner_container" id="like_list_inner_container">
+                        <div class="like_list_top_bar" id="like_list_top_bar">
+                            <h2>Likes</h2>
+                            <img onclick="close_list()" src="{% static 'resources/img/close.jpg'%}" >
+                        </div>
+                        <hr />
+                        <div class="like_list_content" id="like_list_content">
+                            <ul class="list_of_liked_users" id="list_of_liked_users">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    
+                </script>
+
+                <!--MY change 1 end-->
+                <!--div class="text">
+                    <p class="total_likes">{{post.total_likes}} likes</p>
+                    <p>View all 2 comments</p>
+                </div-->
                 <ul class="comments">
                     <li>I am from Dhaka</li>
                     <li>Give me some sunshine</li>

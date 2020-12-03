@@ -1,3 +1,54 @@
+document.getElementById("like_list_inner_container").onclick = function(event){
+    event.stopPropagation();
+}
+
+function close_list() {
+    document.querySelector(".like_list_container").style.display = "none";
+}
+
+function like_list(user,post, x){
+    var csrf = $("input[name=csrfmiddlewaretoken]").val()
+    $.ajax({
+        method: "GET",
+        url: 'like_list',
+        data: {
+            logged_user: user,
+            post_id: post,
+            csrfmiddlewaretoken: csrf
+        },
+        success:function(response){
+
+            var code = "";
+            $("#list_of_liked_users").html("")
+
+            for(var i=0; i<response.liked_user_list.length; i++){
+
+                var img = '<img src="' + response.liked_user_list[i].user_img + '" />';
+                var img_link = '<a href="' + response.liked_user_list[i].user_link + '" class="user_list_image_link">' + img + '</a>';
+                var link = '<a class="user_list_username_link" href="' + response.liked_user_list[i].user_link + '">' + response.liked_user_list[i].username + '</a>';
+                var username = '<p>' + response.liked_user_list[i].user_name + '</p>';
+
+                var text = '';
+                if(response.liked_user_list[i].isFollowee) text='Unfollow';
+                else if(response.liked_user_list[i].isFollower) text='Follow back';
+                else text ='Follow'
+
+                //logged_user_id = je logged in hoye ase
+                //user_id = je like dise, liked user list tay ase
+                //poster_id = je post dise
+                var button = '<button class="follow_button_in_list" onclick="follow(this, '+response.logged_user_id+', '+response.liked_user_list[i].user_id+')">' + text + '</button>';
+
+                if(response.logged_user_id == response.liked_user_list[i].user_id) code = '<li><div>' + img_link + link + username + '</div></li>';
+                else code = '<li><div>' + img_link + link + username + button + '</div></li>'
+
+                $("#list_of_liked_users").append(code);
+            }
+        }
+    })
+    document.querySelector(".like_list_container").style.display = "flex";
+}
+
+
 function likes(user, post, x){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
     $.ajax({

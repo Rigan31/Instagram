@@ -20,7 +20,7 @@ body{
 }
 
 nav{
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid rgb(180,182,184);
     background-color: white;
 }
 .row{
@@ -41,23 +41,35 @@ nav{
 .search-box{
     text-align: center;
     margin-top: 5px;
-    border: 1px solid black;
+    border: 1px solid rgb(180,182,184);
     width: 70%;
-    padding: 5px;
+    padding: 2px;
+    background-color: rgb(250,250,250);
+    border-radius: 20px;
 }
 
 .search-box input{
+    outline: none;
+    width: 80%;
+    height: 32px;
     border: 1px solid transparent;
+    background-color:  rgb(250,250,250);
 }
 
-.search-box input:active{
-    border: 1px solid transparent;
+.search-box input:focus .search-box{
+    border: 1px solid rgb(96,166,239);
+}
+
+.search-box button{
+    border: 0px;
+    font-size: 120%;
+    background-color: rgb(250,250,250);
 }
 
 .main-nav{
     list-style: none;
     float: right;
-    margin-top: 12px;
+    padding: 3px;
 }
 
 .main-nav li{
@@ -66,7 +78,7 @@ nav{
 }
 
 .icon{
-    color: cornflowerblue;
+    color: black;
     font-size: 120%;
 }
 /************************/
@@ -93,20 +105,22 @@ nav{
 }
 
 .stories{
-    height: 110px;
-    padding: 10px;
-    padding-bottom: 20px;
+    height: 210px;
+    padding: 5px;
     width: auto;
-    background-color: white;
+    background-color: rgb(250,250,250);
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
 }
 .story{
-    height: 80px;
-    width: 80px; 
+    position: relative;
+    height: 180px;
+    width: 120px;
     margin-right: 15px;
     display: inline-block;
+    border-radius: 15px;
+    border: 1px solid  rgb(180,182,184);
 }
 
 .story:last-child{
@@ -114,13 +128,30 @@ nav{
 }
 
 .story-photo{
-    padding: 3px;
-    height: 100%;
     width: 100%;
-    border-radius: 50%;
-    border: 2px solid blue;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 15px;
     cursor: pointer;
 }
+
+.storier_photo{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 5px solid rgb(24,118,242);
+}
+
+.storier_photo img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+
 
 /***********************************************/
 
@@ -257,7 +288,7 @@ nav{
     display: block;
     margin-top: 2px;
     padding:10px;
-    background-color: thistle;
+    background-color: yellow;
 }
 .profile{
     margin-left: 15px;
@@ -281,3 +312,182 @@ nav{
     float: right;
     margin-top: 20px;
 }
+
+.dropdown{
+    overflow: hidden;
+}
+
+.dropdown-content a{
+    display: block;
+    padding: 10px;
+    height: 35px;
+    color: black;
+}
+
+.dropdown-content a:hover{
+    background-color: rgba(223, 223, 223, 0.2);
+}
+.dropdown-content i{
+    margin-right: 10px;
+}
+
+
+.dropdown-content{
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-top: 20px;
+    border:1px solid rgb(225,226,229);
+    text-align: left;
+}
+
+.dropdown-content-show{
+    display: block;
+}
+
+.nav-icon-circle{
+    border-radius: 50%;
+    padding: 12px;
+    background-color:rgb(228,230,235);
+    width: 40px;
+    height: 40px;
+    text-align: center;
+}
+
+.nav-menu-active{
+    background-color: rgb(231,243,255);
+}
+
+.nav-menu-active .icon{
+    color: rgb(24,119,242);
+}
+
+/*My change 1: showing liked user lists*/
+
+.like_list_show_button{
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline
+}
+
+.like_list_container{
+    background: rgba(0,0,0,0);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    justify-content: center;
+    align-content: center;
+    display: none;
+}
+
+.like_list_inner_container{
+
+    position: fixed;
+    top: 27%;
+    height: 400px;
+    width: 22%;
+    border-radius: 24px;
+    position: fixed;
+    min-width: 300px;
+    background-color: white;
+    border: 2px solid black;
+}
+
+.like_list_inner_container hr{
+    margin: 0px;
+}
+
+.like_list_top_bar{
+    height: 45px;
+    padding: 10px 5px 5px 5px;
+    border-radius: 24px;
+    text-align: center;
+    width: 100%;
+}
+
+.like_list_top_bar h2{
+    align-content: center;
+}
+
+.like_list_top_bar img{
+    float: right;
+    height: 37px;
+    width: 39px;
+    border-radius: 70%;
+    cursor: pointer;
+    margin-top: -32px;
+    margin-right: 2px;
+}
+
+.like_list_content{
+
+}
+
+.list_of_liked_users{
+
+}
+
+.list_of_liked_users li {
+    list-style-type: none;
+}
+
+.list_of_liked_users li div {
+    width: 94%;
+    height: 55px;
+    margin: 5px 4px 0px 10px;
+    padding-top: 3px;
+}
+
+.user_list_image_link{
+    float: left;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.user_list_username_link{
+    color: black;
+    text-decoration: none;
+    font-size: 24px;
+    padding-left: 12px;
+}
+
+.list_of_liked_users li div a:hover{
+    text-decoration: underline;
+}
+
+.list_of_liked_users li div p{
+    color: gray;
+    text-decoration: none;
+    font-size: 16px;
+    margin-left: 62px;
+}
+
+.list_of_liked_users li div img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.follow_button_in_list{
+    background-color: #0095f6;
+    border-radius: 8px;
+    padding: 7px;
+    color: white;
+    font-size: 16px;
+    margin-top: -38px;
+    float: right;
+}
+
+/*My change 1 end*/

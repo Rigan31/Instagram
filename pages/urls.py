@@ -9,4 +9,5 @@ urlpatterns = [
     path('create-story', views.create_story, name='create-story'),
     path('search', views.search, name='search'),
     path('follow', views.follow, name='follow'),
+    path('like_list', views.like_list, name='like_list'),
 ]

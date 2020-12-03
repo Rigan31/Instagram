@@ -436,6 +436,7 @@ def follow(request):
         user_id = request.POST['user_id']
         followee_id = request.POST['followee_id']
         msg = request.POST['msg']
+        print('adfjalksjdflajdsfljdflasdjflaksdjflka')
 
         cursor = connection.cursor()
         newMsg = ""
@@ -457,3 +458,51 @@ def follow(request):
             newMsg = "Unfollow"
         
         return JsonResponse({'newMsg': newMsg})
+
+######################################################
+#asif code ......................
+#My change 1 showing liked user list
+def like_list(request):
+    if request.is_ajax:
+
+        logged_user_id = request.GET['logged_user']
+        post_id = request.GET['post_id']
+
+        cursor = connection.cursor()
+        sql = "SELECT USER_ID FROM POSTS WHERE ID = %s;"
+        cursor.execute(sql,[post_id])
+        main_user_id = cursor.fetchone()[0]
+
+
+        sql = "SELECT * FROM USERDATA WHERE ID = ANY(SELECT USER_ID FROM LIKES WHERE POST_ID = %s);"
+        cursor.execute(sql,[post_id])
+
+        users = []
+        result = cursor.fetchall()
+
+        for r in result:
+            user_id = r[0]
+            user_username = r[3]
+            user_name = r[4]
+            user_img = r[6]
+            user_link = "user/" + str(user_id)
+
+            row = {
+                'user_id': user_id,
+                'username': user_username,
+                'user_img': user_img,
+                'user_link': user_link,
+                'user_name': user_name,
+                'isFollowee': isFollowee(logged_user_id, user_id),
+                'isFollower': isFollower(logged_user_id, user_id),
+            }
+            users.append(row)
+        cursor.close()
+        context ={
+            'liked_user_list': users,
+            'logged_user_id': logged_user_id,
+            'poster_id': main_user_id,
+        }
+        return JsonResponse(context)
+
+#############################################
