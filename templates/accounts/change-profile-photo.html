@@ -1,0 +1,30 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+
+<div class="edit-profile-body clearfix">
+
+    <div class="edit-profile-option">
+        <a href="{% url 'edit-profile'%}">Edit Profile</a>
+        <a href="{% url 'search-history' %}">Search History</a>
+        <a href="{% url 'change-profile-photo' %}">Change profile photo</a>
+    </div>
+
+    <div class="edit-profile-photo-body">
+        <div class="edit-profile-photo">
+            <img src="{{ photo_path}}" id="edit-profile-photo-photo">
+        </div>
+        <div class="edit-profile-photo-submit">
+            <form method ="POST" action="{% url 'change-profile-photo' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="file" class="create-post-label"> <i class="fa fa-cloud-upload"></i>Change Photo</label>
+                <input id="file" name="file" class="file" type='file' style="display: none;" onchange="previewChangePhoto(this)"/>
+                <input class="create-post-button" type="submit" value="Post">
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

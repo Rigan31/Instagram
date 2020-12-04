@@ -3,6 +3,7 @@ from django.db import connection
 from django.core.files.storage import FileSystemStorage
 from django.db.models.functions.datetime import datetime
 from django.contrib.staticfiles.storage import staticfiles_storage
+from django.http import JsonResponse
 
 # Create your views here.
 
@@ -119,14 +120,6 @@ def edit_profile(request):
             sql = "UPDATE USERDATA SET PHONE_NUMBER=%s WHERE ID = %s;"
             cursor.execute(sql, [phone_number, user_id])
 
-        file = request.FILES.get('profile_photo', False)
-        if file: 
-            fs = FileSystemStorage()
-            file_new_path = fs.save(file.name, file)
-            file_url = fs.url(file_new_path)
-            sql = "UPDATE USERDATA SET PROFILE_PIC=%s WHERE ID = %s;"
-            cursor.execute(sql, [file_url, user_id])
-
     sql = "SELECT NAME, USERNAME, EMAIL, PASSWORD, NVL(GENDER, ''), NVL(DOB, ''), NVL(FACEBOOK_LINK, ''), NVL(TWITTER_LINK, ''), NVL(PHONE_NUMBER, '') FROM USERDATA WHERE ID = %s;"
     cursor.execute(sql, [user_id])
     pi= cursor.fetchone()
@@ -147,3 +140,68 @@ def edit_profile(request):
     }
 
     return render(request, 'accounts/edit-profile1.html', context)
+
+
+
+def search_history(request):
+    user_id = request.session['user_id']
+    cursor = connection.cursor()
+    sql = "SELECT ID, NAME, DATE_OF_SEARCH FROM SEARCH WHERE USER_ID = %s ORDER BY DATE_OF_SEARCH DESC;"
+    cursor.execute(sql, [user_id])
+    result = cursor.fetchall()
+
+    histories = []
+    for history in result:
+        row = {
+            'search_id': history[0],
+            'search_name': history[1],
+            'search_date': history[2],
+        }
+        histories.append(row)
+    
+    context = {
+        'histories': histories,
+        'user_id': user_id,
+    }
+    return render(request, 'accounts/search-history.html', context)
+
+def search_delete(request):
+    user_id = request.session['user_id']
+    if request.is_ajax:
+        search_id = request.GET['search_id']
+        cursor = connection.cursor()
+
+        mm = request.GET['mm']
+        if mm == 1:
+            
+            sql = "DELETE FROM SEARCH WHERE ID = %s AND USER_ID = %s;"
+            cursor.execute(sql, [search_id, user_id])
+        else:
+            sql = "DELETE FROM SEARCH WHERE USER_ID = %s;"
+            cursor.execute(sql, [user_id])
+        cursor.close()
+    return JsonResponse({})
+
+def change_profile_photo(request):
+    user_id = request.session['user_id']
+    cursor = connection.cursor()
+    print("ajsdfajsdf")
+    if request.method == 'POST':
+        file = request.FILES.get('file', False)
+        if file: 
+            fs = FileSystemStorage()
+            file_new_path = fs.save(file.name, file)
+            file_url = fs.url(file_new_path)
+            print("akdfjalsdjfalsdjflkasjdflkasjdf", file_url)
+            sql = "UPDATE USERDATA SET PROFILE_PIC=%s WHERE ID = %s;"
+            cursor.execute(sql, [file_url, user_id])
+    
+    sql = "SELECT PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+    cursor.execute(sql, [user_id])
+    photo_path = cursor.fetchone()
+
+    context = {
+        'photo_path': photo_path[0],
+        'user_id': user_id,
+    }
+    return render(request, 'accounts/change-profile-photo.html', context)

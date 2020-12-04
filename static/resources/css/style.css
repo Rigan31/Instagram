@@ -392,23 +392,23 @@ nav{
 }
 
 .like_list_inner_container{
-
     position: fixed;
     top: 27%;
     height: 400px;
     width: 22%;
     border-radius: 24px;
     position: fixed;
-    min-width: 300px;
+    min-width: 400px;
     background-color: white;
     border: 2px solid black;
+    overflow: hidden;
 }
 
 .like_list_inner_container hr{
-    margin: 0px;
+    margin: 0px
 }
 
-.like_list_top_bar{
+.like_list_top_bar{;
     height: 45px;
     padding: 10px 5px 5px 5px;
     border-radius: 24px;
@@ -431,7 +431,10 @@ nav{
 }
 
 .like_list_content{
-
+    height: 88%;
+    overflow-y: auto;
+    border-radius: 24px;
+    padding-bottom: 5px;
 }
 
 .list_of_liked_users{
@@ -459,7 +462,7 @@ nav{
 .user_list_username_link{
     color: black;
     text-decoration: none;
-    font-size: 24px;
+    font-size: 16px;
     padding-left: 12px;
 }
 

@@ -7,8 +7,8 @@
 
 <div class="search-users-body">
     {% for following in user_following %}
-        <div class="search_users">
-                <div class="searchee_info clearfix">
+        <div class="search_users clearfix">
+                
                     <div class="searchee_photo">
                         <a href="{% url 'profile' following.id %}"><img src="{{ following.profile_photo }}" alt="identity"></a>
                     </div>
@@ -19,15 +19,15 @@
                         {%csrf_token%}
                         {% if user_id != following.id %}
                             {% if following.isFollowee %}
-                                <button onClick="follow_button(this, '{{ user_id}}', '{{ following.id }}')">Unfollow</button>
+                                <button onClick="follow_button(this, '{{ user_id}}', '{{ following.id }}', 1)">Unfollow</button>
                             {% elif following.isFollower %}
-                                <button onClick="follow_button(this, '{{ user_id}}', '{{ following.id }}')">Follow back</button>
+                                <button onClick="follow_button(this, '{{ user_id}}', '{{ following.id }}', 1)">Follow back</button>
                             {% else %}
-                                <button onClick="follow_button(this, '{{ user_id}}', '{{ following.id }}')">Follow</button>
+                                <button onClick="follow_button(this, '{{ user_id}}', '{{ following.id }}', 1)">Follow</button>
                             {% endif %}
                         {% endif %}
                     </div>
-                </div>
+                
         </div>
     {% endfor %}
 </div>

@@ -61,7 +61,7 @@ function likes(user, post, x){
         },
         success:function(response){
             $(x).toggleClass("fa-heart fa-heart-o")
-            var y = x.parentElement.parentElement.parentElement
+            var y = x.parentElement.parentElement.parentElement.parentElement
             var z = null
             for(var i = 0; i < y.children.length; i++){
                 if(y.children[i].className == "text"){
@@ -76,6 +76,7 @@ function likes(user, post, x){
         }
     })
 }
+
 
 function saved(user, post, x){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
@@ -115,7 +116,7 @@ function follow(x, user, followee){
     })
 }
 
-function follow_button(x, user, followee){
+function follow_button(x, user, followee, mm){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
     console.log(user)
     console.log(followee)
@@ -131,20 +132,25 @@ function follow_button(x, user, followee){
         success:function(response){
             //$(x).toggleClass("fa-bookmark fa-bookmark-o")
             x.innerHTML = response.newMsg
-    
+            if(mm == 1)
+                x.parentElement.parentElement.style.display = "none"
         }
     })
 }
 
 function modalTheimage(x, story_path){
     var c = x.parentElement.children
-    var modal = c[1]
-    var modalImg = modal.children[1]
+    //var modal = c[1]
+    //var modalImg = modal.children[1]
+
+    var modal = document.getElementById('myModal');
+    var modalImg = modal.children[1];
+
     modal.style.display = "block";
     modalImg.src = story_path;
     c[2].style.borderColor = "white"
 
-    
+
 }
 
 function closeThemodal(x) { 
@@ -193,7 +199,7 @@ window.onclick = function(event) {
     }
 }
 
-function previewPostUpload(e){
+function previewPostUpload(e, mm){
     var files = e.target.files,
     filesLength = files.length;
     console.log('Files length: '+ filesLength);
@@ -208,18 +214,21 @@ function previewPostUpload(e){
         console.log(filetype)
     
         fileReader.onload = (function(e) {
-            var file = e.target;
-            if(filetype == 'image'){
-                console.log('here is the image')
-                $(div1).append("<div class=\"pip\">" +
-                "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
-                "</div>");
+            if(mm == 1){
+                var file = e.target;
+                if(filetype == 'image'){
+                    console.log('here is the image')
+                    $(div1).append("<div class=\"pip\">" +
+                    "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
+                    "</div>");
+                }
+                else{
+                    $(div2).append("<div class=\"pip\">" +
+                    "<video class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\">" + "</video>"+
+                    "</div>");
+                }
             }
-            else{
-                $(div2).append("<div class=\"pip\">" +
-                "<video class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\">" + "</video>"+
-                "</div>");
-            }
+            
         });
         fileReader.readAsDataURL(f);
        
@@ -227,5 +236,43 @@ function previewPostUpload(e){
         
 }
 
+function search_delete(x,search, m){
+    var csrf = $("input[name=csrfmiddlewaretoken]").val()
+    $.ajax({
+        method: "GET",
+        url: 'search-delete',
+        data: {
+            search_id: search,
+            mm: m,
+            csrfmiddlewaretoken: csrf
+        },
+        success:function(response){
+            if(m == 1){
+                x.parentElement.parentElement.style.display = 'none'
+            }
+            else{
+                var y = document.querySelectorAll('.search-history-element')
+                for(var i = 0; i < y.length; i++)
+                    y[i].style.display = 'none'
+            }
+        }
+    })
+}
 
+
+function previewChangePhoto(input) {
+    console.log("here")
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      console.log("fadf")
+      
+      reader.onload = function(e) {
+        var x = document.querySelectorAll('#edit-profile-photo-photo')
+        console.log(x)
+        $('#edit-profile-photo-photo').attr('src', e.target.result);
+      }
+      
+      reader.readAsDataURL(input.files[0]); // convert to base64 string
+    }
+}
 

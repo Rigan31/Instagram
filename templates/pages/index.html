@@ -1,3 +1,4 @@
+
 {% extends 'base.html'%}
 {% load static%}
 {% block content %}
@@ -12,16 +13,14 @@
             {% for story in stories %}
                 <div class="story">
                         <img src="{{ story.story_path }}" class="story-photo" onclick="modalTheimage(this, '{{story.story_path}}')">
-                        <div id="myModal" class="modal">
-                            <span class="close" onclick="closeThemodal(this)">&times;</span>
-                            <img class="modal-content" id="img01">
-                        </div>
                         <div class="storier_photo">
                             <a href="{% url 'profile' story.storier_id%}"><img src="{{ story.storier_photo }}"></a>
                         </div>
                 </div>
             {% endfor %}
         </div>
+
+        <!-- Post section -->
 
         {% for post in posts %}
             <div class="post">
@@ -33,10 +32,6 @@
                     <div class="name">
                         <a href="{% url 'profile' post.poster_id %}">{{post.poster_name}}</a>
                     </div>
-                </div>
-
-                <div class="caption">
-                    {{post.caption}}
                 </div>
                 
                 {% for photo in post.photos %}
@@ -56,23 +51,26 @@
                         loadPostimage({{post.photos}})
                     </script>
                 </div-->
-                
-                {% csrf_token %}
-                <ul class="icons clearfix">
-                    {% if post.isLike %}
-                        <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
-                    {% else %}
-                        <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
-                    {% endif %}
-                    <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
-                    <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
-                    {% if post.isSave %}
-                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
-                    {% else %}
-                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
-                    {% endif %}
-                    
-                </ul>
+
+                <div class="post_icons">
+                    {% csrf_token %}
+                    <ul class="icons clearfix">
+                        {% if post.isLike %}
+                            <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        {% else %}
+                            <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        {% endif %}
+                        <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
+                        <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
+                        {% if post.isSave %}
+                            <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        {% else %}
+                            <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+
 
                 <!--MY change 1: showing liked user list-->
 
@@ -81,33 +79,18 @@
                     <p>View all 2 comments</p>
                 </div>
 
-                <div class="like_list_container" id="like_list_container" onclick="close_list()">
-                    <div class="like_list_inner_container" id="like_list_inner_container">
-                        <div class="like_list_top_bar" id="like_list_top_bar">
-                            <h2>Likes</h2>
-                            <img onclick="close_list()" src="{% static 'resources/img/close.jpg'%}" >
-                        </div>
-                        <hr />
-                        <div class="like_list_content" id="like_list_content">
-                            <ul class="list_of_liked_users" id="list_of_liked_users">
-                            </ul>
-                        </div>
-                    </div>
+                <div class="caption">
+                    {{post.caption}}
                 </div>
 
-                <script>
-                    
-                </script>
-
                 <!--MY change 1 end-->
-                <!--div class="text">
-                    <p class="total_likes">{{post.total_likes}} likes</p>
-                    <p>View all 2 comments</p>
-                </div-->
                 <ul class="comments">
                     <li>I am from Dhaka</li>
                     <li>Give me some sunshine</li>
                 </ul>
+
+                <hr />
+
                 <div class="add-comment clearfix">
                     <input type="text" placeholder="Add your comment">
                     <a href="#">Post</a>
@@ -115,6 +98,28 @@
             </div>
         {% endfor %}
 
+            <!-- like list -->
+            <div class="like_list_container" id="like_list_container" onclick="close_list()">
+                <div class="like_list_inner_container" id="like_list_inner_container">
+                    <div class="like_list_top_bar" id="like_list_top_bar">
+                        <h2>Likes</h2>
+                        <img onclick="close_list()" src="{% static 'resources/img/close.jpg'%}" >
+                    </div>
+                    <hr />
+                    <div class="like_list_content" id="like_list_content">
+                        <ul class="list_of_liked_users" id="list_of_liked_users">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- like list done -->
+        <!-- Post section done -->
+
+    </div>
+
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeThemodal(this)">&times;</span>
+        <img class="modal-content" id="img01">
     </div>
     
     <div class="optional">
@@ -172,5 +177,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}

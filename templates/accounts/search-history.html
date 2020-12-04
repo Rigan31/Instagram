@@ -1,0 +1,36 @@
+{% extends 'base.html'%}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+<div class="edit-profile-body clearfix">
+
+    <div class="edit-profile-option">
+        <a href="{% url 'edit-profile'%}">Edit Profile</a>
+        <a href="{% url 'search-history' %}">Search History</a>
+        <a href="{% url 'change-profile-photo' %}">Change profile photo</a>
+    </div>
+
+    <div class="search-history-body">
+        {% for history in histories %}
+            <div class="search-history-element clearfix">
+                <div class="search-history-name">
+                    {{ history.search_name}}
+                </div>
+                <div class="search-history-date">
+                    {{history.search_date}}
+                </div>
+                <div class="search-history-delete">
+                    <button class="search-history-delete-button" onclick="search_delete(this, '{{history.search_id}}', 1)"> Delete </button>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="search-history-clear-all">
+            <button class="clear-all-button" onclick="search_delete(this, '{{history.search_id}}', 2)">Clear All</button>
+        </div>
+    </div>
+    
+
+</div>
+
+{% endblock %}

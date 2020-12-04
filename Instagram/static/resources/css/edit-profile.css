@@ -1,9 +1,40 @@
+.edit-profile-body{
+  width: 70%;
+  margin: 20px auto 0px auto;
+  padding: 20px;
+}
+
+.edit-profile-option{
+  width: 150px;
+  height: 100%;
+  margin-top: 200px;
+  float: left;
+}
+
+.edit-profile-option a{
+  display: block;
+  width: 150px;
+  height: 40px;
+  text-decoration: none;
+  text-align: center;
+  padding: 10px 0px;
+  background: white;
+  color: black;
+  border: 0.5px solid rgb(225,226,229);
+  
+}
+
+.edit-profile-option a:hover{
+  background-color: rgb(225,226,229);
+}
+
 .edit-profile{
-    width: 50%;
-    margin: 20px auto 0px auto;
+    width: 70%;
+    margin-left: 100px;
     border: 1.5px solid  rgb(225,226,229);
     padding: 40px;
     background-color: white;
+    float: left;
   }
 
   .about-you{
@@ -66,3 +97,109 @@
     color: #666666;
   }
   
+
+/* search history *******************/
+
+.search-history-body{
+    width: 70%;
+    margin-left: 100px;
+    border: 1.5px solid  rgb(225,226,229);
+    padding: 40px;
+    background-color: white;
+    float: left;
+}
+
+.search-history-element{
+  width: 100%;
+  height: 60px;
+  padding-left: 15px;
+  border: 0.5px solid rgb(225,226,229);
+  border-radius: 15px;
+  margin-bottom: 10px;
+}
+
+
+.search-history-element:hover{
+  background-color: rgb(225,226,229);
+}
+.search-history-name{
+  width: 40%;
+  font-size: 120%;
+  margin-top: 20px;
+  float: left;
+}
+
+.search-history-date{
+  margin-top: 23px;
+  float: left;
+  width: 40%;
+}
+
+.search-history-delete{
+  float: right;
+  width: 20%;
+}
+.search-history-delete button{
+  margin-top: 15px;
+  color: balck;
+  font-weight: 500;
+  background-color: rgb(225,226,229);
+  width: 80%;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+}
+
+.search-history-delete button:hover{
+  background-color: red;
+  color: white;
+}
+
+.search-history-clear-all{
+  text-align: right; 
+}
+.search-history-clear-all button{
+  margin-top: 10px;
+  width: 100px;
+  height: 30px;
+  margin-right: 25px;
+  border-radius: 10px;
+  border: none;
+  background-color: rgb(225,226,229);
+  color: black;
+  font-weight: 500;
+}
+.search-history-clear-all button:hover{
+  background-color: red;
+  color: white;
+}
+
+/******************Change profile pic*******************/
+
+.edit-profile-photo-body{
+    width: 70%;
+    margin-left: 100px;
+    border: 1.5px solid  rgb(225,226,229);
+    padding: 40px;
+    background-color: white;
+    float: left;
+}
+
+.edit-profile-photo{
+  width: 50%;
+  height: 250px;
+  margin: 20px auto;
+}
+
+.edit-profile-photo img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 1px solid  rgb(225,226,229);
+}
+
+.edit-profile-photo-submit{
+  width: 50%;
+  margin: 40px auto 10px auto;
+}
