@@ -19,99 +19,10 @@ body{
     visibility: hidden;
 }
 
-nav{
-    border-bottom: 1px solid rgb(180,182,184);
-    background-color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 3;
-}
-.row{
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-/********navbar**********/
-.logo-box{
-    text-align: left;
-}
-
-.logo{
-    height: 40px;
-    width: auto;
-}
-
-.search-box{
-    text-align: center;
-    margin-top: 5px;
-    border: 1px solid rgb(180,182,184);
-    width: 70%;
-    padding: 2px;
-    background-color: rgb(250,250,250);
-    border-radius: 20px;
-}
-
-.search-box input{
-    outline: none;
-    width: 80%;
-    height: 32px;
-    border: 1px solid transparent;
-    background-color:  rgb(250,250,250);
-}
-
-.search-box input:focus .search-box{
-    border: 1px solid rgb(96,166,239);
-}
-
-.search-box button{
-    border: 0px;
-    font-size: 120%;
-    background-color: rgb(250,250,250);
-}
-
-.main-nav{
-    list-style: none;
-    float: right;
-    padding: 3px;
-}
-
-.main-nav li{
-    display: inline-block;
-    margin-left: 20px;
-}
-
-.icon{
-    color: black;
-    font-size: 120%;
-}
-/************************/
-
-/* er niche change korsi*/
-
-.fa{
-    cursor: pointer;
-}
 .main-part{
     width: 100%;
     height: auto;
     margin: 20px auto 0 auto;
-}
-
-.optional{
-    position: fixed;
-    left: 70%;
-    width: 20%;
-    top: 100px;
-    min-width: 200px;
-    z-index: 2;
-}
-
-@media (max-width: 1000px){
-    .optional{
-        left: calc(30% + 400px);
-    }
 }
 
 .stories{
@@ -214,7 +125,7 @@ nav{
     position: absolute;
     left: 30%;
     width: 40%;
-    top: 105px;
+    top: 80px;
     min-width: 400px;
     z-index: 0;
 }
@@ -394,15 +305,6 @@ nav{
     display: block;
 }
 
-.nav-icon-circle{
-    border-radius: 50%;
-    padding: 12px;
-    background-color:rgb(228,230,235);
-    width: 40px;
-    height: 40px;
-    text-align: center;
-}
-
 .nav-menu-active{
     background-color: rgb(231,243,255);
 }
@@ -410,8 +312,6 @@ nav{
 .nav-menu-active .icon{
     color: rgb(24,119,242);
 }
-
-/*My css-1*/
 
 .like_list_show_button{
     border: none;
@@ -454,7 +354,7 @@ nav{
     margin: 0px
 }
 
-.like_list_top_bar{;
+.like_list_top_bar{
     height: 45px;
     padding: 10px 5px 5px 5px;
     border-radius: 24px;
@@ -529,8 +429,6 @@ nav{
     border-radius: 50%;
 }
 
-/*my css 2*/
-
 .follow_button_in_list, .follow_button_in_list:active, .follow_button_in_list:focus{
     background-color: #0095f6;
     border-radius: 8px;
@@ -541,3 +439,139 @@ nav{
     float: right;
 }
 
+/* change 5-12-2020*/
+
+/*
+    These are rewritten
+    Replace these
+ */
+
+
+
+.optional{
+    position: fixed;
+    left: calc(70% + 10px);
+    width: 270px;
+    top: 75px;
+    z-index: 2;
+}
+
+@media (max-width: 1000px){
+    .optional{
+        left: 703px;
+    }
+
+    .post-and-story{
+        left: 300px;
+    }
+}
+
+/* navbar */
+
+nav{
+    border-bottom: 1px solid rgb(180,182,184);
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 3;
+}
+.row{
+    width: 100%;
+    margin: 0px;
+    padding: 0px 0px 8px 0px;
+    min-width: 1000px;
+}
+
+.logo-box{
+    width: 30%;
+    text-align: right;
+    padding-right: 10px;
+    padding-top: 10px;
+}
+
+.logo{
+    height: 40px;
+    width: auto;
+}
+
+.search-box{
+    text-align: center;
+    margin-top: 5px;
+    border: 1px solid rgb(180,182,184);
+    width: 40%;
+    min-width: 400px;
+    padding: 2px;
+    background-color: rgb(250,250,250);
+    border-radius: 20px;
+    position: absolute;
+    top: 5px;
+    left: 30%;
+}
+
+.search-box input{
+    outline: none;
+    width: 80%;
+    height: 32px;
+    border: 1px solid transparent;
+    background-color:  rgb(250,250,250);
+}
+
+.search-box input:focus .search-box{
+    border: 1px solid rgb(96,166,239);
+}
+
+.search-box button{
+    border: 0px;
+    font-size: 120%;
+    background-color: rgb(250,250,250);
+}
+
+.navbar_icon_list{
+    position:absolute;
+    top: 5px;
+    left: calc(70% + 10px);
+    width: 270px;
+    text-align: right;
+}
+
+.navbar_icon_list_element{
+    display: inline-block;
+    margin-top: 5px;
+    padding-left: 2px;
+}
+
+@media (max-width: 1000px){
+    .search-box{
+        left: 300px;
+    }
+    .navbar_icon_list{
+        left: 703px;
+    }
+}
+
+.nav-icon-circle{
+    border-radius: 50%;
+    padding: 12px;
+    background-color:rgb(228,230,235);
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.fa{
+
+}
+
+.icon{
+    color: black;
+    font-size: 120%;
+}
+
+/* navbar end */
+
+/*
+    These are newly written
+*/

@@ -2,56 +2,50 @@
 
 <nav>
     <div class="row">
-        <div class="col span-1-of-3">
-            <div class="logo-box">
+
+        <div class="logo-box">
+            <a href="{% url 'index' %}">
                 <img src="{% static 'resources/img/Instagram_logo.png'%}" alt="logo" class="logo">
+            </a>
+        </div>
+
+        <div class="search-box">
+            <form action="{% url 'search' %}">
+                <input type="search" placeholder="Search" name="search">
+                <button type="submit"><i class="fa fa-search"></i></button>
+            </form>
+        </div>
+
+        <div class="navbar_icon_list">
+            <a href="{% url 'index'%}" class="navbar_icon_list_element">
+                <div class="nav-icon-circle nav-menu-active">
+                    <i class="fa fa-home icon"></i>
+                </div>
+            </a>
+
+            <div class="nav-icon-circle navbar_icon_list_element" onclick="showDropDown(this)" >
+                <i class="fa fa-plus icon dropdown-icon icon"></i>
+                <div class="dropdown-content" id="dropdown-content-create-story-post">
+                    <a href="{% url 'create-post'%}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Post</a>
+                    <a href="{% url 'create-story'%}"><i class="fa fa-file-image-o" aria-hidden="true"></i></i>Story</a>
+                </div>
+            </div>
+
+            <a href="#" class="navbar_icon_list_element">
+                <div class="nav-icon-circle">
+                    <i class="fa fa-bell icon"></i>
+                </div>
+            </a>
+
+            <div class="nav-icon-circle navbar_icon_list_element" onclick="showDropDown(this)">
+                <i class="fa fa-caret-down dropdown-icon icon"></i>
+                <div class="dropdown-content">
+                    <a href="{% url 'profile' user_id %}"><i class="fa fa-user-circle-o" aria-hidden="true"></i>Profile</a>
+                    <a href="{% url 'edit-profile'%}"><i class="fa fa-cog" aria-hidden="true"></i></i>Settings</a>
+                    <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Log Out</a>
+                </div>
             </div>
         </div>
-        <div class="col span-1-of-3">
-            <div class="search-box">
-                <form action="{% url 'search' %}">
-                    <input type="search" placeholder="Search" name="search">
-                    <button type="submit"><i class="fa fa-search"></i></a>
-                </form>
-                
-            </div>
-        </div>
-        <div class="col span-1-of-3">
-            <ul class="main-nav">
-                <li>
-                    <div class="nav-icon-circle nav-menu-active">
-                        <a href="{% url 'index'%}"><i class="fa fa-home icon"></i></a>
-                    </div>
-                </li>
-                <li>
-                    <div class="nav-icon-circle">
-                        <div class="dropdown">
-                            <i onclick="showDropDown(this)" class="fa fa-plus icon dropdown-icon icon"></i>
-                            <div class="dropdown-content">
-                                <a href="{% url 'create-post'%}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Post</a>
-                                <a href="{% url 'create-story'%}"><i class="fa fa-file-image-o" aria-hidden="true"></i></i>Story</a>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="nav-icon-circle">
-                        <a href="#"><i class="fa fa-bell icon"></i></a>
-                    </div>
-                </li>
-                <li>
-                    <div class="nav-icon-circle">
-                        <div class="dropdown">
-                            <i onclick="showDropDown(this)" class="fa fa-caret-down dropdown-icon icon"></i>
-                            <div class="dropdown-content">
-                                <a href="{% url 'profile' user_id %}"><i class="fa fa-user-circle-o" aria-hidden="true"></i>Profile</a>
-                                <a href="{% url 'edit-profile'%}"><i class="fa fa-cog" aria-hidden="true"></i></i>Settings</a>
-                                <a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i>Log Out</a>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
+
     </div>
 </nav>

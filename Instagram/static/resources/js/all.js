@@ -171,23 +171,32 @@ $(document).ready(function() {
 })
 
 function showDropDown(x){
-    var c = x.parentElement
-    console.log(c)
-    for(var i = 0; i < c.children.length; i++){
-        console.log(c.children[i].className)
-        if(c.children[i].className == 'dropdown-content'|| c.children[i].className == 'dropdown-content dropdown-content-show'){
-            console.log(c.children[i])
-            c.children[i].classList.toggle("dropdown-content-show")
-            break
+
+    var all_dropdown = document.getElementsByClassName('dropdown-content')
+    for(var i=0; i<all_dropdown.length; i++){
+        var c = all_dropdown[i];
+
+        if(c.className == 'dropdown-content dropdown-content-show') {
+            c.classList.toggle("dropdown-content-show");
+            break;
+        }
+    }
+    for(var i=0; i<x.children.length; i++){
+        var c = x.children[i];
+
+        if(c.className == 'dropdown-content'|| c.className == 'dropdown-content dropdown-content-show') {
+            c.classList.toggle("dropdown-content-show");
+            break;
         }
     }
 }
 
 
 window.onclick = function(event) {
-    if (!event.target.matches('.dropdown-icon')) {
+
+    if (event.target.matches('.nav-icon-circle')==false && event.target.matches('.dropdown-icon')==false) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
-      console.log(dropdowns)
+
       var i;
       for (i = 0; i < dropdowns.length; i++) {
         var openDropdown = dropdowns[i];

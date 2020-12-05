@@ -125,6 +125,8 @@ def edit_profile(request):
     pi= cursor.fetchone()
     cursor.close()
 
+    bday = ''
+    if pi[5] != None: bday = pi[5].strftime("%Y-%m-%d")
     
     context = {
         'name': pi[0],
@@ -132,7 +134,7 @@ def edit_profile(request):
         'email': pi[2],
         'password': pi[3],
         'gender': pi[4],
-        'birthday': pi[5].strftime("%Y-%m-%d"),
+        'birthday': bday,
         'facebook_link': pi[6],
         'twitter_link': pi[7],
         'phone_number': pi[8],
