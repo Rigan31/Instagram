@@ -10,4 +10,5 @@ urlpatterns = [
     path('search', views.search, name='search'),
     path('follow', views.follow, name='follow'),
     path('like_list', views.like_list, name='like_list'),
+    path('notification', views.notification, name='notification'),
 ]

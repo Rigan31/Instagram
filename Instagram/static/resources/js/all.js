@@ -1,6 +1,6 @@
-document.getElementById("like_list_inner_container").onclick = function(event){
-    event.stopPropagation();
-}
+//document.getElementById("like_list_inner_container").onclick = function(event){
+   // event.stopPropagation();
+//} i write it in the document ready function
 
 function close_list() {
     document.querySelector(".like_list_container").style.display = "none";
@@ -168,6 +168,11 @@ $(document).ready(function() {
     $(this).addClass("nav-menu-active");
    });
 
+   // i bring it here if any problem occurs change it
+   $('#like_list_inner_container').on('click', function(event){
+    event.stopPropagation();
+   });
+    
 })
 
 function showDropDown(x){
@@ -191,9 +196,8 @@ function showDropDown(x){
     }
 }
 
-
-window.onclick = function(event) {
-
+$(window).click(function(event) {
+    console.log("hello world")
     if (event.target.matches('.nav-icon-circle')==false && event.target.matches('.dropdown-icon')==false) {
       var dropdowns = document.getElementsByClassName("dropdown-content");
 
@@ -206,7 +210,12 @@ window.onclick = function(event) {
         }
       }
     }
-}
+
+    if(event.target.matches('.show-all-notification') == false && event.target.matches('.notification') == false){
+        document.querySelector('.show-all-notification').style.display = "none";
+    }
+});
+
 
 function previewPostUpload(e, mm){
     var files = e.target.files,
@@ -285,3 +294,34 @@ function previewChangePhoto(input) {
     }
 }
 
+function showNotification(x){
+    var a = window.location.protocol + "//" + window.location.host + "/notification"
+    console.log(a)
+    $.ajax({
+        method: "GET",
+        url: a,
+        data: {
+            
+        },
+        success:function(response){
+            var div = document.querySelectorAll(".show-all-notification")
+
+            for(var i = 0; i < response.notifications.length; i++){
+                var photo = response.notifications[i].action_photo
+                var msg = response.notifications[i].msg
+                var date = response.notifications[i].date
+
+                var img = '<img src="'+photo+'" class="">'
+                var imgDiv = '<div class="show-all-notification-photo"> '+img+' </div>'
+
+                var msgDiv = '<div class="show-all-notification-msg">'+msg+'</div>'
+                var dateDiv = '<div class="show-all-notification-date">'+date+'</div'
+                var msgDateDiv = '<div class="show-all-notification-msg-date">'+msgDiv+dateDiv+'</div>'
+                var finalDiv = '<div class="show-all-notification-element clearfix">'+imgDiv+msgDateDiv+'</div>'
+                
+                $(div).append(finalDiv)
+            }
+            document.querySelector('.show-all-notification').style.display = "block";
+        }
+    })
+}

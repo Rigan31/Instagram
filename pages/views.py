@@ -167,9 +167,6 @@ def getPosts(user_id):
     
     return posts
 
-
-
-
 def index(request):
     if 'user_id' not in request.session:
         return redirect('login')
@@ -247,7 +244,6 @@ def create_post(request):
 
     return render(request, 'pages/create-post.html', context)
 
-
 def create_story(request):
     user_id = request.session['user_id']
     cursor = connection.cursor()
@@ -270,7 +266,6 @@ def create_story(request):
     }
     return render(request, 'pages/create-story.html', context)
 
-
 def likes(request):
     if request.is_ajax:
         user_id = request.POST['user_id']
@@ -287,7 +282,6 @@ def likes(request):
         
         cursor.close()
         return JsonResponse({'count': totalLikes(post_id)})
-
 
 def saved(request):
     if request.is_ajax:
@@ -331,7 +325,6 @@ def isFollower(user_id, searchee_id):
         return False
     else:
         return True
-
 
 def searchUsers(user_id, value):
     cursor = connection.cursor()
@@ -506,3 +499,44 @@ def like_list(request):
         return JsonResponse(context)
 
 #############################################
+
+
+def notification(request):
+    user_id = request.session['user_id']
+    if request.is_ajax:
+        cursor = connection.cursor()
+        sql = "SELECT MESSAGE, DATE_OF_MESSAGE FROM NOTIFICATION WHERE USER_ID =%s ORDER BY DATE_OF_MESSAGE DESC;"
+        cursor.execute(sql, [user_id])
+        result = cursor.fetchall()
+
+        notifications = []
+
+        for r in result:
+            date = r[1]
+            msg = r[0].split(",")
+            action_id = msg[0]
+            msg = msg[1]
+
+            sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+            cursor.execute(sql, [action_id])
+            action= cursor.fetchone()
+            action_name = action[0]
+            action_photo = action[1]
+
+            msg = action_name+' '+msg
+            print(msg)
+            row = {
+                'action-id': action_id,
+                'action_name': action_name,
+                'action_photo': action_photo,
+                'msg': msg,
+                'date': date,
+            }
+            notifications.append(row)
+        
+        cursor.close()
+        context = {
+            'notifications': notifications,
+            'user_id': user_id,
+        }
+        return JsonResponse(context)
