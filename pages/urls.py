@@ -11,4 +11,14 @@ urlpatterns = [
     path('follow', views.follow, name='follow'),
     path('like_list', views.like_list, name='like_list'),
     path('notification', views.notification, name='notification'),
+
+
+    path('chat', views.chat, name='chat'),
+    path('search-chat-user', views.searchUserChat, name='search-chat-user'),
+    path('send-msg-to-partner', views.send_msg_to_partner, name='send-msg-to-partner'),
+    path('chat-to-partner/<int:partner_id>', views.chat_to_partner, name='chat-to-partner'),
+
+
+
+    path('post/<int:post_id>', views.post, name='post'),
 ]

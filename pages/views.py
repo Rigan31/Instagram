@@ -187,7 +187,6 @@ def index(request):
 
     return render(request, 'pages/index.html', context)
     
-
 def create_post(request):
     img_extension = [".jpg", ".jpeg", ".png"]
     video_extension = [".mp4", ".avi", ".mov", ".webm", ".mkv", ".gif"]
@@ -349,7 +348,6 @@ def searchUsers(user_id, value):
     
     return search_users
 
-
 def searchPosts(user_id, value): 
     cursor = connection.cursor()
     value = value[1:]
@@ -395,7 +393,6 @@ def searchPosts(user_id, value):
         search_posts.append(row)
     
     return search_posts
-
 
 def search(request):
     user_id = request.session['user_id']
@@ -500,7 +497,6 @@ def like_list(request):
 
 #############################################
 
-
 def notification(request):
     user_id = request.session['user_id']
     if request.is_ajax:
@@ -540,3 +536,206 @@ def notification(request):
             'user_id': user_id,
         }
         return JsonResponse(context)
+
+
+################# my new code for chat
+
+def searchChatUsersList(value):
+    cursor = connection.cursor()
+    value = value.lower()
+    almostValue = '%'+value+'%'
+
+    sql = "SELECT ID, NAME, PROFILE_PIC FROM USERDATA WHERE LOWER(NAME) LIKE %s OR LOWER(USERNAME) LIKE %s;"
+    cursor.execute(sql, [almostValue, almostValue])
+    result = cursor.fetchall()
+    cursor.close()
+
+    search_users = []
+    for r in result:
+        row = {
+            'searchee_id': r[0],
+            'searchee_name': r[1],
+            'searchee_photo': r[2],
+        }
+        search_users.append(row)
+    
+    return search_users
+
+
+def searchUserChat(request):
+    if request.is_ajax:
+        value = request.GET['value']
+        return JsonResponse({'chatUserList': searchChatUsersList(value)})
+
+def lastChatUser(user_id):
+    cursor = connection.cursor()
+    sql = "SELECT USER_TO_ID, MAX(DATE_OF_MESSAGE) FROM USER_CHAT WHERE USER_FROM_ID = %s GROUP BY (USER_TO_ID) UNION SELECT USER_FROM_ID, MAX(DATE_OF_MESSAGE) FROM USER_CHAT WHERE USER_TO_ID = %s GROUP BY (USER_FROM_ID);"
+    cursor.execute(sql, [user_id, user_id])
+    result = cursor.fetchall()
+    result = sorted(result, key=lambda tup: tup[1], reverse=True)
+
+    visited = set() 
+  
+    Output = [] 
+   
+    for a, b in result: 
+        if not a in visited: 
+            visited.add(a) 
+            Output.append((a, b))
+
+    ans = []
+    for r in Output:
+        sql = "SELECT NAME, USERNAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql, [r[0]])
+        result = cursor.fetchone()
+
+        row = {
+            'partner_id': r[0], 
+            'partner_name': result[0],
+            'partner_username': result[1],
+            'partner_profile_pic': result[2],
+        }
+        ans.append(row)
+
+    return ans
+
+
+def chat(request):
+    user_id = request.session['user_id']
+
+    context = {
+        'user_id': user_id,
+        'last_chat_user': lastChatUser(user_id),
+    }
+    return render(request, 'pages/chat.html', context)
+
+
+def chat_to_partner(request, partner_id):
+    user_id = request.session['user_id']
+    cursor = connection.cursor()
+    sql = "SELECT MESSAGE, DATE_OF_MESSAGE, USER_FROM_ID FROM USER_CHAT WHERE (USER_FROM_ID = %s AND USER_TO_ID = %s) OR (USER_FROM_ID = %s AND USER_TO_ID = %s) ORDER BY DATE_OF_MESSAGE ASC;"
+    cursor.execute(sql, [user_id, partner_id, partner_id, user_id])
+    result = cursor.fetchall()
+
+    messages = []
+
+    for r in result:
+        msg = r[0]
+        msg_date = r[1]
+        user_from_id = r[2]
+
+        row = {
+            'msg': msg,
+            'msg_date': msg_date,
+            'user_from_id': user_from_id,
+        }
+
+        messages.append(row)
+
+    context = {
+        'user_id': user_id,
+        'partner_id': partner_id,
+        'messages': messages,
+        'last_chat_user': lastChatUser(user_id),
+    }
+
+    return render(request, 'pages/user-to-user-chat.html', context)
+
+def send_msg_to_partner(request):
+    user_id = request.session['user_id']
+    if request.is_ajax:
+        msg = request.GET['msg']
+        partner_id = request.GET['partner_id']
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        cursor = connection.cursor()
+        sql = "INSERT INTO USER_CHAT VALUES(%s, %s, %s, %s);"
+        cursor.execute(sql, [user_id, partner_id, msg, timestamp])
+        
+        context = {
+            'msg': msg,
+            'msg_date': timestamp,
+        }
+        return JsonResponse(context)
+
+
+###################### FOR POST
+
+def getPost(user_id, post_id):
+
+    cursor = connection.cursor()
+    sql = "SELECT USERNAME FROM USERDATA WHERE ID = %s;"
+    cursor.execute(sql, [user_id])
+    r = cursor.fetchone()
+
+    username = r[0]
+
+    sql = "SELECT * FROM POSTS WHERE ID=%s;"
+    cursor.execute(sql, [post_id])
+    r = cursor.fetchone()
+
+    creation_time = r[1]
+    caption = str(r[2])
+    update_time = r[3]
+    visibility = r[4]
+    poster_id = r[5]
+
+    photos = collectphotos(post_id)
+    videos = collectVideos(post_id)
+
+    sql = "SELECT NAME, PROFILE_PIC, USERNAME FROM USERDATA WHERE ID = %s;"
+    cursor.execute(sql, [poster_id])
+    poster_info = cursor.fetchone()
+    poster_name = poster_info[0]
+    poster_photo = poster_info[1]
+    poster_username = poster_info[2]
+
+    age = 0
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    isfollower = isFollowee(user_id, poster_id)
+    isfollowee = isFollowee(user_id, poster_id)
+
+    print(timestamp)
+    print(creation_time)
+
+    if caption == 'None':
+        caption = ""
+
+    if str(update_time) == "None":
+        update_time = creation_time
+
+    if str(visibility) == "None":
+        visibility = True
+
+    data = {
+        'user_id': user_id,
+        'username': username,
+        'post_id': post_id,
+        'creation_time': creation_time,
+        'caption': caption,
+        'update_time': update_time,
+        'visibility': visibility,
+        'photos': photos,
+        'videos': videos,
+        'poster_id': poster_id,
+        'poster_name': poster_name,
+        'poster_photo': poster_photo,
+        'poster_username': poster_username,
+        'total_likes': totalLikes(post_id),
+        'isLike': isLike(user_id, post_id),
+        'isSave': isSave(user_id, post_id),
+        'age': age,
+        'isFollower': isfollower,
+        'isFollowee': isfollowee,
+        'mediaCount': range(1,photos.__len__() + videos.__len__() + 1,1),
+    }
+    return data
+
+def post(request, post_id):
+
+    if 'user_id' not in request.session:
+        return redirect('login')
+    user_id = request.session['user_id']
+
+    return render(request, 'pages/post.html', getPost(user_id, post_id))

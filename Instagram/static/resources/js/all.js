@@ -1,6 +1,7 @@
-//document.getElementById("like_list_inner_container").onclick = function(event){
-   // event.stopPropagation();
-//} i write it in the document ready function
+function inner_container_stop_propagation(){
+    var e = window.event;
+    e.stopPropagation();
+}
 
 function close_list() {
     document.querySelector(".like_list_container").style.display = "none";
@@ -10,7 +11,7 @@ function like_list(user,post, x){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
     $.ajax({
         method: "GET",
-        url: 'like_list',
+        url: 'http://' + window.location.hostname + ':' + window.location.port + '/like_list',
         data: {
             logged_user: user,
             post_id: post,
@@ -53,7 +54,7 @@ function likes(user, post, x){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
     $.ajax({
         method: "POST",
-        url: 'likes',
+        url: 'http://' + window.location.hostname + ':' + window.location.port + '/likes',
         data: {
             user_id: user,
             post_id: post,
@@ -64,13 +65,15 @@ function likes(user, post, x){
             var y = x.parentElement.parentElement.parentElement.parentElement
             var z = null
             for(var i = 0; i < y.children.length; i++){
-                if(y.children[i].className == "text"){
+                if(y.children[i].className == "text" || y.children[i].className == "text text-in-post-view"){
                     z = y.children[i]
                     break
                 }
             }
 
-            z.children[0].innerHTML = response.count + ' likes'
+            //console.log(z.children[0])
+            var html = '<h4><b style="font-size: 20px" >' + response.count + '</b> likes</h4>';
+            z.children[0].innerHTML = html;
             
             
         }
@@ -82,7 +85,7 @@ function saved(user, post, x){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
     $.ajax({
         method: "POST",
-        url: 'saved',
+        url: 'http://' + window.location.hostname + ':' + window.location.port + '/saved',
         data: {
             user_id: user,
             post_id: post,
@@ -101,7 +104,7 @@ function follow(x, user, followee){
     console.log(followee)
     $.ajax({
         method: "POST",
-        url: 'follow',
+        url: 'http://' + window.location.hostname + ':' + window.location.port + '/follow',
         data: {
             user_id: user,
             followee_id: followee,
@@ -167,11 +170,6 @@ $(document).ready(function() {
     $('.nav-icon-circle').removeClass("nav-menu-active");
     $(this).addClass("nav-menu-active");
    });
-
-   // i bring it here if any problem occurs change it
-   $('#like_list_inner_container').on('click', function(event){
-    event.stopPropagation();
-   });
     
 })
 
@@ -216,43 +214,6 @@ $(window).click(function(event) {
     }
 });
 
-
-function previewPostUpload(e, mm){
-    var files = e.target.files,
-    filesLength = files.length;
-    console.log('Files length: '+ filesLength);
-    var div1 = document.querySelectorAll('.create-post-upload-image')
-    var div2 = document.querySelectorAll('.create-post-upload-video')
-
-    for (var i = 0; i < filesLength; i++) {
-        var f = files[i]
-        var fileReader = new FileReader();
-        var filetype = f.type.slice(0,5)
-        
-        console.log(filetype)
-    
-        fileReader.onload = (function(e) {
-            if(mm == 1){
-                var file = e.target;
-                if(filetype == 'image'){
-                    console.log('here is the image')
-                    $(div1).append("<div class=\"pip\">" +
-                    "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
-                    "</div>");
-                }
-                else{
-                    $(div2).append("<div class=\"pip\">" +
-                    "<video class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\">" + "</video>"+
-                    "</div>");
-                }
-            }
-            
-        });
-        fileReader.readAsDataURL(f);
-       
-    }
-        
-}
 
 function search_delete(x,search, m){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
@@ -324,4 +285,175 @@ function showNotification(x){
             document.querySelector('.show-all-notification').style.display = "block";
         }
     })
+}
+
+/* =================================*/
+
+function change_color_of_post_button(x){
+    var p = x.parentElement;
+    for(var i=0; i<p.children.length; i++){
+        if(p.children[i].nodeName == "BUTTON"){
+            var st1 = 'rgba(' + 0 + ',' + 149 + ',' + 246 + ',' + 0.3 + ')';
+            var st2 = 'rgba(' + 0 + ',' + 149 + ',' + 246 + ',' + 1 + ')';
+
+            if(x.value == "") {
+                p.children[i].style.color = st1;
+                p.children[i].disabled = true;
+            }
+            else {
+                p.children[i].style.color = st2;
+                p.children[i].disabled = false;
+            }
+            break;
+        }
+    }
+}
+
+function addComment(x, logged_user_username, logged_user_id, post_id){
+
+    console.log('ekhane ashe');
+    console.log('username ' + logged_user_username);
+    console.log('user_id ' + logged_user_id);
+    console.log('post_id ' + post_id);
+    var xx = new Date();
+    console.log('time ' + xx.getDay() + '-' + xx.getMonth() + '-' + xx.getFullYear() + ' ' + xx.getHours() + ':' + xx.getMinutes() + ':' + xx.getSeconds());
+
+}
+
+function load_media_container(){
+
+    console.log('ekhane ashe');
+
+}
+
+var mediaIndex = 0;
+
+function slideMedia(x, photos, videos, add){
+
+    var div = x.parentElement;
+    var img = div.children[0];
+    var vid = div.children[1]
+    var prev = div.children[2];
+    var next = div.children[3];
+    var dotDiv = div.children[4];
+    var count = photos.length + videos.length;
+
+    prev.style.display = 'block';
+    next.style.display = 'block';
+    for(var i=0; i<dotDiv.children.length; i++) dotDiv.children[i].style.backgroundColor = '#bbb';
+
+    if(add==1 && mediaIndex+1<count) mediaIndex = mediaIndex+1;
+    else if(add==-1 && mediaIndex-1>=0) mediaIndex = mediaIndex-1;
+
+    if(mediaIndex == count-1) next.style.display = 'None';
+    if(mediaIndex == 0) prev.style.display = 'None';
+
+    img.style.display = 'None';
+    vid.style.display = 'None';
+
+    if(mediaIndex<photos.length){
+        img.style.display = 'block';
+        img.src = photos[mediaIndex];
+    }else{
+        vid.src = videos[mediaIndex - photos.length];
+        vid.style.display = 'block';
+    }
+    dotDiv.children[mediaIndex].style.backgroundColor = 'deepskyblue';
+}
+
+
+
+
+
+function previewPostUpload(e){
+    var files = e.target.files,
+    filesLength = files.length;
+    console.log('Files length: '+ filesLength);
+    var div1 = document.querySelectorAll('.create-post-upload-image')
+    var div2 = document.querySelectorAll('.create-post-upload-video')
+
+    for (var i = 0; i < filesLength; i++) {
+        var f = files[i]
+        var fileReader = new FileReader();
+        var filetype = f.type.slice(0,5)
+        
+        console.log(filetype)
+    
+        fileReader.onload = (function(e) {
+                var file = e.target;
+                if(filetype == 'image'){
+                    console.log('here is the image')
+                    $(div1).append("<div class=\"pip\">" +
+                    "<img class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\"/>" +
+                    "</div>");
+                }
+                else{
+                    $(div2).append("<div class=\"pip\">" +
+                    "<video class=\"imageThumb\" src=\"" + e.target.result + "\" title=\"" + file.name + "\" controls >" + "</video>"+
+                    "</div>");
+                }
+        });
+        fileReader.readAsDataURL(f);
+       
+    }
+        
+}
+
+function searchUserChat(){
+    var u = window.location.protocol + "//" + window.location.host + "/search-chat-user"
+    console.log(u)
+    var a = document.querySelector('.search-chat-user').value
+    var div = document.querySelector('.chat-search-user-list')
+    if(a == ""){
+        div.style.display = "none"
+    }
+    else{
+        $.ajax({
+            method: "GET",
+            url: u,
+            data:{
+                value:a,
+            },
+            success:function(response){
+                div.style.display = "block";
+                div.innerHTML = ""
+                for(var i = 0; i < response.chatUserList.length; i++){
+                    var name = response.chatUserList[i].searchee_name
+                    var id = response.chatUserList[i].searchee_id
+                    var nameDiv = '<div class="" >'+name+'</div>'
+                    var mainDiv = '<div class="chat-user-list-element">'+nameDiv+'</div>'
+                    var tmp = window.location.protocol+"//"+window.location.host + "/chat-to-partner/"+id
+                    var aid = '<a href="'+tmp+'">'+mainDiv+'</a>'
+                    $(div).append(aid)
+                }
+            }
+        })
+    }
+    
+}
+
+
+function sendMsg(p){
+    var u = window.location.protocol + "//" + window.location.host + "/send-msg-to-partner"
+    var a = document.querySelector('.send-msg-to-partner').value
+    if(a != ""){
+        $.ajax({
+            method: "GET",
+            url: u,
+            data:{
+                msg:a,
+                partner_id: p, 
+            },
+            success:function(response){
+                var div = document.querySelector('.chat-user-message')
+                var msgDiv = '<div>'+a+'</div>'
+                var datediv = '<div>'+response.msg_date+'</div>'
+                var mainDiv = '<div>'+msgDiv+datediv+'</div>'
+                $(div).append(mainDiv)
+
+                document.querySelector('.send-msg-to-partner').value = ""
+            }
+        })
+    }
+
 }

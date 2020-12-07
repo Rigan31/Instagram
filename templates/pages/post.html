@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{%block title%}
+    {{ post_id }}
+{%endblock%}
+
+
+{% block content %}
+{% include 'navbar.html' %}
+
+    <div class="post-container-in-post">
+        <div class="media-in-post" >
+
+            {% if photos|length > 0 %}
+                <img src="{{ photos.0 }}" class="post-photo-in-post" />
+                <video class="post-video-in-post" style="display: none !important;" controls></video>
+            {% else %}
+                <img class="post-photo-in-post" style="display: none !important;" />
+                <video src="{{ videos.0 }}" class="post-video-in-post" controls></video>
+            {% endif %}
+
+            <a class="button-in-post prev" onclick="slideMedia(this, {{ photos }}, {{ videos }}, -1)">&#10094;</a>
+            {% if mediaCount|length > 1 %}
+            <a class="button-in-post next" onclick="slideMedia(this, {{ photos }}, {{ videos }}, 1)">&#10095;</a>
+            {% endif %}
+
+            <div class="dot-container-on-media">
+                {% for i in mediaCount %}
+
+                    {% if forloop.counter == 1  %}
+                        <span class="dot-on-media" style="background-color:deepskyblue;"></span>
+                    {% else %}
+                        <span class="dot-on-media" style="background-color:#bbb"></span>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="right-side-of-post">
+            <div class="top-bar-of-post-right">
+                <a href="{% url 'profile' poster_id %}"><img src="{{ poster_photo }}" alt="identity" class="profile-photo-in-topbar"></a>
+                <a href="{% url 'profile' poster_id %}"><h3>{{ poster_username }}</h3></a>
+
+                {% if user_id != poster_id %}
+                    {% if isFollowee %}
+                        <button class="follow_button_in_post_view" onclick="follow(this, '{{ user_id }}', '{{ poster_id }}')">Unfollow</button>
+                    {% elif isFollower %}
+                        <button class="follow_button_in_post_view" onclick="follow(this, '{{ user_id }}', '{{ poster_id }}')">Follow Back</button>
+                    {% else %}
+                        <button class="follow_button_in_post_view" onclick="follow(this, '{{ user_id }}', '{{ poster_id }}')">Follow</button>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+
+            <hr class="top" />
+
+            <div class="middle-of-post-right">
+
+                <div class="caption-of-post">
+                    <a href="{% url 'profile' poster_id %}"><img src="{{ poster_photo }}" alt="identity" class="profile-photo-in-topbar"></a>
+                    <a href="{% url 'profile' poster_id %}"><h3>{{ poster_username }}</h3></a>
+
+                    <span>
+                        <br />
+                        <br />
+                        {{ caption }} ajkjasfkjafnkasjnkajsfdnamsndjaksdnkajmsdnkjasfdkj ajfnaksjmf nakjs fnakjfn kjafn amf ajkfn amfn akj<!--ajkjasfkjafnkasjnkajsfdnamsndjaksdnkajmsdnkjasfdkj ajfnaksjmf nakjs fnakjfn kjafn amf ajkfn amfn akj-->
+                    </span>
+                </div>
+
+                <hr class="caption-comment" />
+
+                <div class="comment-container">
+                    <div class="comment-of-post"> <!-- For each comment -->
+
+                        <div class="comment-portion">
+                            <a href="{% url 'profile' poster_id %}"><img src="{{ poster_photo }}" alt="identity" class="profile-photo-in-topbar"></a>
+                            <a href="{% url 'profile' poster_id %}"><h3>{{ poster_username }}</h3></a>
+
+                            <span class="comment-text">
+                                <br />
+                                <br />
+                                hello from the otherside -_- ajkjasfkjafnkasjnkajsfdnamsndjaksdnkajmsdnkjasfdkj ajfnaksjmf nakjs fnakjfn kjafn amf ajkfn amfn akj
+                                <br />
+                                <div>
+
+                                    <p class="age-text inside-comment-reply">Time</p>
+                                    <button class="age-text inside-comment-reply" onclick="" >
+                                        likes
+                                    </button>
+                                    <a href="#" class="age-text inside-comment-reply reply-button">Reply</a>
+
+                                </div>
+                            </span>
+
+                            {% csrf_token %}
+                            <ul class="icons clearfix">
+                                {% if isLike %}
+                                    <li><i class="fa fa-heart like-for-comment" aria-hidden="true" onclick=""></i></li>
+                                {% else %}
+                                    <li><i class="fa fa-heart-o like-for-comment" aria-hidden="true" onclick=""></i></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                        <div class="reply-portion">
+                            <a href="{% url 'profile' poster_id %}"><img src="{{ poster_photo }}" alt="identity" class="profile-photo-in-topbar"></a>
+                            <a href="{% url 'profile' poster_id %}"><h3>{{ poster_username }}</h3></a>
+
+                            <span class="reply-text">
+                                <br />
+                                <br />
+                                hello from the otherside -_- ajkjasfkjafnkasjnkajsfdnamsndjaksdnkajmsdnkjasfdkj ajfnaksjmf nakjs fnakjfn kjafn amf ajkfn amfn akj
+                                <br />
+                                <div>
+
+                                    <p class="age-text inside-comment-reply">Time</p>
+                                    <button class="age-text inside-comment-reply" onclick="" >
+                                        likes
+                                    </button>
+                                    <a href="#" class="age-text inside-comment-reply reply-button">Reply</a>
+
+                                </div>
+                            </span>
+
+                            {% csrf_token %}
+                            <ul class="icons clearfix">
+                                {% if isLike %}
+                                    <li><i class="fa fa-heart like-for-reply" aria-hidden="true" onclick=""></i></li>
+                                {% else %}
+                                    <li><i class="fa fa-heart-o like-for-reply" aria-hidden="true" onclick=""></i></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <div class="reply-portion">
+                            <a href="{% url 'profile' poster_id %}"><img src="{{ poster_photo }}" alt="identity" class="profile-photo-in-topbar"></a>
+                            <a href="{% url 'profile' poster_id %}"><h3>{{ poster_username }}</h3></a>
+
+                            <span class="reply-text">
+                                <br />
+                                <br />
+                                hello from the otherside -_- ajkjasfkjafnkasjnkajsfdnamsndjaksdnkajmsdnkjasfdkj ajfnaksjmf nakjs fnakjfn kjafn amf ajkfn amfn akj
+                                <br />
+                                <div>
+
+                                    <p class="age-text inside-comment-reply">Time</p>
+                                    <button class="age-text inside-comment-reply" onclick="" >
+                                        likes
+                                    </button>
+                                    <a href="#" class="age-text inside-comment-reply reply-button">Reply</a>
+
+                                </div>
+                            </span>
+
+                            {% csrf_token %}
+                            <ul class="icons clearfix">
+                                {% if isLike %}
+                                    <li><i class="fa fa-heart like-for-reply" aria-hidden="true" onclick=""></i></li>
+                                {% else %}
+                                    <li><i class="fa fa-heart-o like-for-reply" aria-hidden="true" onclick=""></i></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <hr class="mid" />
+
+            <div class="footer-of-post-right">
+                {% csrf_token %}
+                <ul class="icons clearfix">
+                    {% if isLike %}
+                        <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{user_id}}', '{{post_id}}', this)"></i></li>
+                    {% else %}
+                        <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{user_id}}', '{{post_id}}', this)"></i></li>
+                    {% endif %}
+                    <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
+                    <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
+                    {% if isSave %}
+                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post_id}}', this)"></i></li>
+                    {% else %}
+                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post_id}}', this)"></i></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="text text-in-post-view">
+                <button class="like_list_show_button" id="like_list_show_button" onclick="like_list('{{ user_id }}','{{ post_id }}', this)" ><h4>
+                    <b style="font-size: 20px" >{{ total_likes }}</b> likes</h4>
+                </button>
+                <p class="age-text">ekhane time likhba</p>
+            </div>
+
+            <hr class="bottom" />
+
+            <div class="add-comment-in-post clearfix">
+                <input type="text" placeholder="Add your comment" onkeyup="change_color_of_post_button(this)">
+                <button type="submit" onclick="addComment(this, '{{ user_id }}', '{{ username }}', '{{ post_id }}')" disabled>Post</button>
+            </div>
+        </div>
+        <hr />
+        <!-- Post section done -->
+
+    </div>
+
+    <!-- like list -->
+
+    <div class="like_list_container" id="like_list_container" onclick="close_list()">
+        <div class="like_list_inner_container" id="like_list_inner_container" onclick="inner_container_stop_propagation()">
+            <div class="like_list_top_bar" id="like_list_top_bar">
+                <h2>Likes</h2>
+                <img onclick="close_list()" src="{% static 'resources/img/close.jpg'%}" >
+            </div>
+            <hr />
+            <div class="like_list_content" id="like_list_content">
+                <ul class="list_of_liked_users" id="list_of_liked_users">
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeThemodal(this)">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
+    -->
+{% endblock %}

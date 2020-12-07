@@ -1,6 +1,6 @@
 .create-post{
   width: 30%;
-  margin: 50px auto 20px auto;
+  margin: 100px auto 20px auto;
   background-color: rgb(255,255,255);
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
   padding: 10px;
@@ -94,7 +94,7 @@
 
 .create-story{
   width: 30%;
-  margin: 50px auto 20px auto;
+  margin: 120px auto 20px auto;
   background-color: rgb(255,255,255);
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
   padding: 10px;

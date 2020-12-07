@@ -84,10 +84,12 @@
                 </div>
 
                 <!--MY change 1 end-->
+                <a href="{% url 'post' post.post_id %}" target="_blank" >View all comments</a>
                 <ul class="comments">
                     <li>I am from Dhaka</li>
                     <li>Give me some sunshine</li>
                 </ul>
+
 
                 <hr />
 
@@ -100,7 +102,7 @@
 
             <!-- like list -->
             <div class="like_list_container" id="like_list_container" onclick="close_list()">
-                <div class="like_list_inner_container" id="like_list_inner_container">
+                <div class="like_list_inner_container" id="like_list_inner_container" onclick="inner_container_stop_propagation()">
                     <div class="like_list_top_bar" id="like_list_top_bar">
                         <h2>Likes</h2>
                         <img onclick="close_list()" src="{% static 'resources/img/close.jpg'%}" >

@@ -165,7 +165,7 @@ body{
 }
 .name{
     float: left;
-    margin-top: 18px;
+    margin-top: 28px;
     margin-left: 5px;
     font-size: 14px;
     font-weight: bold;
@@ -500,8 +500,7 @@ nav{
     text-align: center;
     margin-top: 5px;
     border: 1px solid rgb(180,182,184);
-    width: 40%;
-    min-width: 400px;
+    width: 250px;
     padding: 2px;
     background-color: rgb(250,250,250);
     border-radius: 20px;
@@ -562,7 +561,7 @@ nav{
 }
 
 .fa{
-
+    cursor: pointer
 }
 
 .icon{
@@ -627,3 +626,372 @@ nav{
 
 
 /********************************************/
+
+.post-container-in-post{
+    position: absolute;
+    left: calc(calc(100% - 950px)/2);
+    width: 950px;
+    top: 90px;
+    min-width: 500px;
+    z-index: 0;
+    height: 700px;
+    border: 1px solid lightgrey;
+}
+
+.media-in-post{
+    width: 60%;
+    height: 100%;
+    position: relative;
+    background-color: #eefaff;
+}
+
+.post-photo-in-post, .post-video-in-post{
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.right-side-of-post{
+    height: 100%;
+    width: 40%;
+    position: absolute;
+    left: 60%;
+    top: 0;
+}
+
+.right-side-of-post hr{
+    margin: 0px 0px -5px 0px;
+    height: 2px;
+    position: absolute;
+    width: 100%;
+}
+
+.right-side-of-post .top{
+    top: 12%;
+}
+
+.right-side-of-post .mid{
+    top: 72%;
+}
+
+.right-side-of-post .bottom{
+    top: 92%;
+}
+
+.top-bar-of-post-right{
+    height: 72px;
+    width: 100%;
+    top: 1%;
+    position: absolute;
+    padding-top: 5px;
+}
+
+.top-bar-of-post-right h3 {
+    position: relative;
+    top: 25px;
+    left: 8px;
+    text-decoration: none;
+}
+
+.profile-photo-in-topbar{
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    float: left;
+    margin-left: 15px;
+    margin-top: 15px;
+    border: 1px solid purple;
+}
+
+.footer-of-post-right {
+    width: 100%;
+    position: absolute;
+    top: 73%;
+    padding: 7px 12px 7px 13px;
+}
+
+.likes-time-in-post{
+    width: 100%;
+    position: absolute;
+    top: 66%;
+    border: 1px solid black;
+}
+
+.add-comment-in-post{
+    width: 100%;
+    padding: 5px 0px 5px 0px;
+    position: absolute;
+    top: 92%;
+}
+.add-comment-in-post input{
+    width: 324px;
+    height: 51px;
+    border: 0px;
+    padding: 20px 20px 20px 16px;
+    color: black;
+    font-size: 15px;
+}
+
+.add-comment-in-post input::placeholder{
+    color: lightgray;
+    font-size: 15px;
+}
+
+.add-comment-in-post input:focus::placeholder{
+    color: grey;
+}
+
+.add-comment-in-post button{
+    width: 55px;
+    float: right;
+    display: block;
+    height: 51px;
+    background-color: white;
+    padding: 7px;
+    font-weight: bold;
+    border: none;
+    color: rgba(0, 149, 246, 0.3);
+    font-size: 16px;
+}
+.add-comment-in-post button:active{
+    padding-top: 10px;
+}
+
+@media (max-width: 1000px){
+    .post-container-in-post{
+        left: 25px;
+    }
+}
+
+.button-in-post{
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: 25px;
+    height: 25px;
+    padding-left: 8px;
+    padding-top: 1px;
+    background-color: rgba(240, 248, 255, 0.5);
+    margin-top: -22px;
+    color: rgba(0,0,0,0.5);
+    font-weight: bold;
+    font-size: 17px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    border-radius: 50%;
+}
+
+.prev{
+    left: 7px;
+    display: none;
+}
+
+.next{
+    right: 7px;
+}
+
+.next:hover{
+    background-color: red;
+}
+
+.button-in-post:hover{
+    background-color: rgba(24,118,242,0.5);
+    //background-color: rgba(240, 248, 255, 0.8);
+}
+
+.dot-container-on-media{
+    text-align: center;
+    position: relative;
+    top: 97%;
+    overflow-x: hidden;
+    white-space: nowrap;
+    width: auto;
+}
+
+.dot-on-media{
+    height: 9px;
+    width: 9px;
+    border-radius: 50%;
+    margin-left: 3px;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+
+.follow_button_in_post_view{
+    background-color: #0095f6;
+    border-radius: 8px;
+    padding: 4px;
+    color: white;
+    font-size: 13px;
+    margin-top: 5px;
+    float: right;
+    margin-right: 20px;
+}
+
+.text-in-post-view{
+    top: 80%;
+    width: 100%;
+    position: absolute;
+    line-height: 27px;
+    padding-left: 13px;
+}
+
+.middle-of-post-right{
+    width: 100%;
+    position: absolute;
+    top: 13%;
+    height: 412px;
+    overflow-y: auto;
+
+}
+
+.caption-of-post{
+    width: 100%;
+    position: relative;
+    display: flex;
+    padding-bottom: 13px;
+
+}
+
+.caption-of-post h3 {
+    position: relative;
+    top: 20px;
+    left: 8px;
+    width: 90%;
+}
+
+.middle-of-post-right br{
+    border: 1px solid red;
+}
+
+.caption-of-post span {
+    position: relative;
+    width: 80%;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+    line-height: 20px;
+}
+
+.caption-comment{
+
+}
+
+.comment-container{
+    width: 100%;
+    position: relative;
+    margin-top: 7px;
+    overflow-y: auto;
+}
+
+.comment-of-post {
+    position: relative;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.comment-portion{
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+.comment-portion h3{
+    position: relative;
+    top: 20px;
+    left: 8px;
+    width: 90%;
+
+}
+
+.comment-portion span {
+    position: relative;
+    width: 70%;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+    line-height: 20px;
+}
+
+.like-for-comment{
+    padding-left: 10px;
+    position: relative;
+    top: 30px;
+}
+
+.reply-portion{
+    position: relative;
+    width: 86%;
+    margin-left: 14%;
+    display: flex;
+}
+
+.reply-portion h3{
+    position: relative;
+    top: 20px;
+    left: 8px;
+    width: 90%;
+
+}
+
+.reply-portion span {
+    position: relative;
+    width: 66%;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+    line-height: 20px;
+}
+
+.like-for-reply{
+    padding-left: 10px;
+    position: relative;
+    top: 30px;
+}
+
+.age-text{
+    color: dimgray !important;
+    font-size: 16px !important;
+    margin-top: -5px;
+}
+
+.comment-text div, .reply-text div{
+    display: flex;
+}
+
+.inside-comment-reply{
+    margin-top: 8px !important;
+    padding-right: 20px !important;
+}
+
+.comment-text div button, .reply-text div button{
+    border: none;
+    background-color: inherit;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.comment-text div button:hover, .reply-text div button:hover{
+    color: #0000CD !important;
+}
+
+.reply-portion div button:active, .comment-text div button:active{
+    padding-top: 1px;
+}
+
+.reply-button:hover{
+    color: #0000CD !important;
+}
+.reply-button:active{
+    padding-top: 1px;
+}
