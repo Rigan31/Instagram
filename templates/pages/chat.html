@@ -7,28 +7,26 @@
 
 <div class="chat-body clearfix">
     <div class="chat-user-list-body">
-        <input type="search" placeholder="Search" name="search-chat-user" class="search-chat-user" onkeyup="searchUserChat()">
-        <button><i class="fa fa-search"></i></button>
+        <div class="chat-user-list-body-search">
+            <input type="search" placeholder="Search" name="search-chat-user" class="search-chat-user" onkeyup="searchUserChat()">
+        </div>
         <div class="chat-search-user-list">
             
         </div>
         <div class="chat-user-list">
             {% for user in last_chat_user%}
                 <a href="{% url 'chat-to-partner' user.partner_id %}">
-                    <div class="chat-user-list-element">
-                        {{user.partner_name}}
+                    <div class="chat-user-list-element clearfix">
+                        <div class="chat-user-list-element-photo"><img src="{{user.partner_profile_pic}}"></div>
+                        <div class="chat-user-list-element-name">{{user.partner_name}}</div>
+                        
                     </div>
                 </a>
             {% endfor %}
         </div>
     </div>
-    <div class="chat-user-message-body">
-        <div class="chat-user-message">
+    <div class="chat-user-msg-and-box">
         
-        </div>
-        <div class="chat-user-text-box">
-            
-        </div>
     </div>
 </div>
 

@@ -404,8 +404,10 @@ function searchUserChat(){
     console.log(u)
     var a = document.querySelector('.search-chat-user').value
     var div = document.querySelector('.chat-search-user-list')
+    var div2 = document.querySelector('.chat-user-list')
     if(a == ""){
         div.style.display = "none"
+        div2.style.display = "block"
     }
     else{
         $.ajax({
@@ -417,11 +419,16 @@ function searchUserChat(){
             success:function(response){
                 div.style.display = "block";
                 div.innerHTML = ""
+                div2.style.display = "none"
                 for(var i = 0; i < response.chatUserList.length; i++){
                     var name = response.chatUserList[i].searchee_name
                     var id = response.chatUserList[i].searchee_id
-                    var nameDiv = '<div class="" >'+name+'</div>'
-                    var mainDiv = '<div class="chat-user-list-element">'+nameDiv+'</div>'
+                    var photo = response.chatUserList[i].searchee_photo
+
+                    var img = '<img src="'+photo+'">'
+                    var imgDiv = '<div class="chat-user-list-element-photo">'+img+'</div>'
+                    var nameDiv = '<div class="chat-user-list-element-name" >'+name+'</div>'
+                    var mainDiv = '<div class="chat-user-list-element clearfix">'+imgDiv+nameDiv+'</div>'
                     var tmp = window.location.protocol+"//"+window.location.host + "/chat-to-partner/"+id
                     var aid = '<a href="'+tmp+'">'+mainDiv+'</a>'
                     $(div).append(aid)
@@ -446,14 +453,20 @@ function sendMsg(p){
             },
             success:function(response){
                 var div = document.querySelector('.chat-user-message')
-                var msgDiv = '<div>'+a+'</div>'
-                var datediv = '<div>'+response.msg_date+'</div>'
-                var mainDiv = '<div>'+msgDiv+datediv+'</div>'
-                $(div).append(mainDiv)
+                var msgDiv = '<div><text>'+a+'</text></div>'
+                //var datediv = '<div>'+response.msg_date+'</div>'
+                var mainDiv = '<div class="chat-msg-right clearfix">'+msgDiv+'</div>'
+                var mainDiv2 = '<div class="chat-user-single-message clearfix">'+mainDiv+'</div>'
+                $(div).append(mainDiv2)
 
                 document.querySelector('.send-msg-to-partner').value = ""
             }
         })
     }
 
+}
+
+function updateScroll(){
+    var element = document.querySelector('.chat-user-message-body');
+    element.scrollTop = element.scrollHeight;
 }

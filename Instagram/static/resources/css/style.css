@@ -506,7 +506,7 @@ nav{
     border-radius: 20px;
     position: absolute;
     top: 5px;
-    left: 30%;
+    left: 45%;
 }
 
 .search-box input{
@@ -561,7 +561,8 @@ nav{
 }
 
 .fa{
-    cursor: pointer
+    cursor: pointer;
+    color: black;
 }
 
 .icon{

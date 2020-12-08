@@ -617,6 +617,10 @@ def chat_to_partner(request, partner_id):
     cursor.execute(sql, [user_id, partner_id, partner_id, user_id])
     result = cursor.fetchall()
 
+    sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+    cursor.execute(sql, [partner_id])
+    info = cursor.fetchone()
+
     messages = []
 
     for r in result:
@@ -637,6 +641,8 @@ def chat_to_partner(request, partner_id):
         'partner_id': partner_id,
         'messages': messages,
         'last_chat_user': lastChatUser(user_id),
+        'partner_name': info[0],
+        'partner_photo': info[1],
     }
 
     return render(request, 'pages/user-to-user-chat.html', context)

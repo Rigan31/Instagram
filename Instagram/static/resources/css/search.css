@@ -1,11 +1,11 @@
 .search-users-post{
     width: 40%;
-    margin: 20px auto;
+    margin: 80px auto 20px auto;
 }
 
 .search-users-body{
     width: 35%;
-    margin: 20px auto;
+    margin: 80px auto 20px auto;
     padding: 20px;
     background-color: white;
     border: 1px solid rgb(180,182,184);
