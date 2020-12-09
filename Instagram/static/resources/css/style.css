@@ -1048,3 +1048,96 @@ nav{
         opacity: 1;
     }
 }
+
+
+
+/*NEW CHANGE*/
+
+
+
+
+.delete-button{
+    color: #bbb;
+    background: none;
+    border: none;
+    font-size: 25px;
+    height: 20px;
+    margin-left: -15px;
+}
+
+.delete-button-icon{
+    margin: 0px !important;
+}
+
+.delete-button-icon:hover, .delete-button-icon:active{
+    cursor: pointer;
+    color: black;
+}
+
+.delete-button-caption{
+    left: 20px;
+    position: relative;
+}
+.delete-button-post{
+    margin-right: 7px;
+    float: right;
+    top: -25px;
+    position: relative;
+}
+
+.edit-button-caption{
+    color: #bbb;
+    background: none;
+    border: none;
+    font-size: 25px;
+    height: 20px;
+    margin-left: 10px;
+}
+
+.edit-button-caption span{
+    margin-left: 0px !important;
+}
+
+.edit-button-icon{
+    margin: 0px !important;
+}
+
+.edit-button-icon:hover, .edit-button-icon:active{
+    cursor: pointer;
+    color: black;
+}
+
+.edit-caption-div{
+    display: none;
+    width: 110%;
+}
+
+.edit-caption-div textarea{
+    width: 90%;
+    overflow-wrap: break-word;
+    overflow-x: hidden;
+    line-height: 20px;
+    height: 200px;
+    padding: 10px;
+    color: black;
+    margin-top: 10px;
+}
+
+.edit-caption-div button{
+    top: 100px;
+    width: 55px;
+    padding: 5px;
+    display: block;
+    font-weight: bold;
+    border: 1px solid skyblue;
+    color: rgba(0, 149, 246, 1);
+    font-size: 16px;
+    margin-top: 5px;
+    margin-bottom: 1px;
+}
+
+.edit-caption-div button:active{
+    color: rgba(0, 149, 246, 1);
+    margin-top:6px;
+    margin-bottom: 0px;
+}

@@ -62,6 +62,13 @@
                     {% endif %}
                 {% endif %}
 
+                {% if poster_id == user_id %}
+                    {% csrf_token %}
+                    <button type="button" class="delete-button delete-button-post" onclick="deleteContent(document.getElementsByClassName('post-container-in-post')[0], {{post_id}}, 'PST')">
+                        <span aria-hidden="true" class="delete-button-icon">&times;</span>
+                    </button>
+                {% endif %}
+
             </div>
 
             <hr class="top" />
@@ -73,12 +80,32 @@
                     <h3><a href="{% url 'profile' poster_id %}">{{ poster_name }}</a></h3>
 
                     <span>
-                        {{ caption }}
+                        <p>{{ caption }}</p>
+
+                        <div class="edit-caption-div clearfix">
+                            {% csrf_token %}
+                            <textarea></textarea>
+                            <button type="submit" onclick="changeCaption(this.parentElement.parentElement, {{ post_id }})">Done</button>
+                        </div>
 
                         <div>
                             <p class="age-text inside-comment-reply">{{ age }}</p>
                         </div>
                     </span>
+
+
+                    {% if poster_id == user_id %}
+                        {% csrf_token %}
+                        <button type="button" class="edit-button-caption" onclick="display_edit_caption_div(this.parentElement.children[2], this)">
+                            <span aria-hidden="true">
+                                <i style="font-size:24px" class="fa edit-button-icon">&#xf044;</i>
+                            </span>
+                        </button>
+
+                        <button type="button" class="delete-button delete-button-caption" onclick="deleteContent(document.getElementsByClassName('caption-of-post')[0].children[2], {{post_id}}, 'CAP', '{{ age }}')">
+                            <span aria-hidden="true" class="delete-button-icon">&times;</span>
+                        </button>
+                    {% endif %}
                 </div>
 
                 <hr class="caption-comment" />
@@ -113,6 +140,13 @@
                                         <li><i class="fa fa-heart-o like-for-comment" aria-hidden="true" onclick="likes('{{ user_id }}','{{ comment.comment_id }}', this, 'CMNT')"></i></li>
                                     {% endif %}
                                 </ul>
+
+                                {% if comment.commenter_id == user_id %}
+                                    {% csrf_token %}
+                                    <button type="button" class="delete-button" onclick="deleteContent(this.parentElement.parentElement, {{comment.comment_id}}, 'CMNT')">
+                                      <span aria-hidden="true" class="delete-button-icon">&times;</span>
+                                    </button>
+                                {% endif %}
                             </div>
 
                             {% for reply in comment.replies %}
@@ -141,10 +175,18 @@
                                             <li><i class="fa fa-heart-o like-for-reply" aria-hidden="true" onclick="likes('{{ user_id }}','{{ reply.reply_id }}', this, 'RPL')"></i></li>
                                         {% endif %}
                                     </ul>
+
+                                    {% if reply.replier_id == user_id %}
+                                        {% csrf_token %}
+                                        <button type="button" class="delete-button" onclick="deleteContent(this.parentElement, {{reply.reply_id}}, 'RPL')">
+                                          <span aria-hidden="true" class="delete-button-icon">&times;</span>
+                                        </button>
+                                    {% endif %}
                                 </div>
+
                             {% endfor %}
-                        </div>
                         <hr class="comment-separator" />
+                        </div>
                     {% endfor %}
 
                 </div>

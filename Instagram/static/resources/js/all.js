@@ -157,17 +157,26 @@ function follow_button(x, user, followee, mm){
     })
 }
 
-function modalTheimage(x, story_path){
+function modalTheimage(x, stories_info, name, id){
     var c = x.parentElement.children
     //var modal = c[1]
     //var modalImg = modal.children[1]
 
+    console.log()
     var modal = document.getElementById('myModal');
     var modalImg = modal.children[1];
 
     modal.style.display = "block";
     modalImg.src = story_path;
     c[2].style.borderColor = "white"
+
+
+
+    var span = '<span class="close" onclick="closeThemodal(this)">&times;</span>'
+    //<div id="myModal" class="modal">
+      //  <span class="close" onclick="closeThemodal(this)">&times;</span>
+        //<img class="modal-content" id="img01">
+    //</div>
 
 
 }
@@ -376,8 +385,6 @@ function slideMedia(x, photos, videos, add){
     }
     dotDiv.children[mediaIndex].style.backgroundColor = 'deepskyblue';
 }
-
-
 
 
 function previewPostUpload(e){
@@ -646,5 +653,95 @@ function addReply(x, logged_user_id, comment_id){
         }
     })
     */
+
+}
+
+
+
+// 10-12-2020
+
+/*####################*/
+
+function deleteContent(x, content_id, content_type, age=''){
+
+
+    if(content_type=='CMNT'){
+        if(confirm('Are you sure you want to delete your comment?')) {
+            x.style.display = "none";
+        }
+        else return;
+    }
+    else if(content_type=='RPL'){
+        if(confirm('Are you sure you want to delete your reply?')) {
+            x.style.display = "none";
+        }
+        else return;
+    }
+    else if(content_type=='CAP'){
+        if(confirm('Are you sure you want to delete your caption?')) {
+            var div = '<div><p class="age-text inside-comment-reply">' + age + '</p></div>'
+            x.innerHTML = divx.style.display = "none";
+        }
+        else return;
+    }
+    else if(content_type=='PST'){
+        if(confirm('Are you sure you want to delete the post?')) {
+            if(! confirm('Everything will be lost!')) return ;
+        }
+        else return ;
+    }
+
+    var csrf = $("input[name=csrfmiddlewaretoken]").val()
+
+    $.ajax({
+        method: 'POST',
+        url: 'http://' + window.location.hostname + ':' + window.location.port + '/deleteContent',
+        data: {
+            content_id: content_id,
+            content_type: content_type,
+            csrfmiddlewaretoken: csrf,
+        },success: function (response) {
+
+            console.log('ashche sohi salamote');
+            if(content_type=='PST') location.href = "http://127.0.0.1:8000/";
+        }
+    })
+}
+
+function display_edit_caption_div(x,y){
+    var p = x.children[0]
+    var div = x.children[1]
+
+    p.style.display = "none"
+
+    if(div.style.display == ""){
+        div.style.display = "grid"
+        div.children[1].innerHTML = p.innerText
+    }
+}
+
+function changeCaption(x, post_id) {
+    var p = x.children[0]
+    var div = x.children[1]
+    var textArea = div.children[1]
+
+    p.innerText = textArea.value
+    textArea.value = ""
+
+    div.style.display = "none"
+    p.style.display = "block"
+
+    var csrf = $("input[name=csrfmiddlewaretoken]").val()
+    $.ajax({
+        method: 'POST',
+        url: 'http://' + window.location.hostname + ':' + window.location.port + '/changeCaption',
+        data:{
+            text: p.innerText,
+            post_id: post_id,
+            csrfmiddlewaretoken: csrf
+        },success: function (response) {
+        }
+    })
+
 
 }

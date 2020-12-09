@@ -10,14 +10,16 @@
 <div class="main-part clearfix">
     <div class="post-and-story">
         <div class="stories">
+
             {% for story in stories %}
                 <div class="story">
-                        <img src="{{ story.story_path }}" class="story-photo" onclick="modalTheimage(this, '{{story.story_path}}')">
+                        <img src="{{ story.stories_info.0.story_path }}" class="story-photo" onclick="modalTheimage(this, '{{story.stories_info}}', '{{storier_name}}', '{{storier_id}}')">
                         <div class="storier_photo">
-                            <a href="{% url 'profile' story.storier_id%}"><img src="{{ story.storier_photo }}"></a>
+                            <a href=""><img src="{{ story.storier_photo }}"></a>
                         </div>
                 </div>
             {% endfor %}
+
         </div>
 
         <!-- Post section -->
@@ -123,7 +125,7 @@
         <span class="close" onclick="closeThemodal(this)">&times;</span>
         <img class="modal-content" id="img01">
     </div>
-    
+
     <div class="optional">
         <div class="profile clearfix">
             <div class="photo-box">
@@ -180,3 +182,4 @@
     </div>
 </div>
 {% endblock %}
+

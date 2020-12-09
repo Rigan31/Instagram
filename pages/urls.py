@@ -23,4 +23,8 @@ urlpatterns = [
     path('post/<int:post_id>', views.post, name='post'),
     path('addComment', views.addComment, name='addComment'),
     path('addReply', views.addReply, name='addReply'),
+
+
+    path('deleteContent', views.deleteContent, name='deleteContent'),
+    path('changeCaption', views.changeCaption, name='changeCaption'),
 ]

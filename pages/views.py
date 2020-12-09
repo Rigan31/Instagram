@@ -19,14 +19,12 @@ def isLike(user_id, post_id, content_type="PST"):
     else:
         return True;
 
-
 def totalLikes(post_id, content_type="PST"):
     cursor = connection.cursor()
     sql = "SELECT COUNT(*) FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = %s;"
     cursor.execute(sql, [post_id, content_type])
     total_likes = cursor.fetchone()
     return total_likes[0]
-
 
 def isSave(user_id, post_id):
     cursor = connection.cursor()
@@ -39,7 +37,6 @@ def isSave(user_id, post_id):
         return False;
     else:
         return True;
-
 
 def addTag(caption, post_id):
     hashtag_list = []
@@ -70,7 +67,6 @@ def addTag(caption, post_id):
         cursor.execute(sql, [hashtag_id, post_id])
     cursor.close()
 
-
 def collectphotos(post_id):
     cursor = connection.cursor()
     sql = "SELECT PHOTO_PATH FROM PHOTOS WHERE POST_ID = %s;"
@@ -81,7 +77,6 @@ def collectphotos(post_id):
     for photo_path in photos_path:
         photos.append(photo_path[0])
     return photos
-
 
 def collectVideos(post_id):
     cursor = connection.cursor()
@@ -94,8 +89,7 @@ def collectVideos(post_id):
         videos.append(video_path[0])
     return videos
 
-
-def getStories(user_id):
+def getStories1(user_id):
     cursor = connection.cursor()
     sql = "SELECT * FROM STORY WHERE (USER_ID = %s OR USER_ID = ANY(SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s)) AND TRUNC(SYSDATE-DATE_OF_STORY) < 1 ORDER BY DATE_OF_STORY DESC;"
     cursor.execute(sql, [user_id, user_id])
@@ -125,6 +119,62 @@ def getStories(user_id):
         stories.append(row)
 
     return stories
+
+##### new stories code
+def getStories(user_id):
+    cursor = connection.cursor()
+    
+    stories_user_list = []
+    stories_user_list.append(user_id)
+    sql = "SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s;"
+    cursor.execute(sql, [user_id])
+
+    result = cursor.fetchall()
+
+    for r in result:
+        stories_user_list.append(r[0])
+    
+    stories = []
+    for storier_id in stories_user_list:
+        sql = "SELECT LOCATION, DATE_OF_STORY FROM STORY WHERE USER_ID = %s AND TRUNC(SYSDATE-DATE_OF_STORY) < 1 ORDER BY DATE_OF_STORY DESC;"
+        cursor.execute(sql, [storier_id])
+        result = cursor.fetchall()
+
+        if len(result) == 0:
+            continue
+
+        stories_info = []
+        for story in result:
+            row = {
+                'story_path': story[0],
+                'creation_time': story[1],
+            }
+            stories_info.append(row)
+            
+            
+        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql, [storier_id])
+        storier_info = cursor.fetchone()
+        storier_name = storier_info[0]
+        storier_photo = storier_info[1]
+
+        story_row = {
+            'storier_id': storier_id,
+            'storier_name': storier_name,
+            'storier_photo': storier_photo,
+            'stories_info': stories_info,
+            'mediaCount': range(1,stories_info.__len__()+1,1),
+        }
+        stories.append(story_row)
+    
+    return stories
+
+
+
+
+
+
+
 
 def getPosts(user_id):
     cursor = connection.cursor()
@@ -184,7 +234,7 @@ def index(request):
         'user_photo': user_info[0],
         'name': user_info[1],
     }
-
+    
     return render(request, 'pages/index.html', context)
     
 def create_post(request):
@@ -933,3 +983,93 @@ def addReply(request):
         }
         cursor.close()
         return JsonResponse(data)
+
+
+### 10-12-2020
+######################################################
+
+
+def editCaption(post_id, cap):
+
+    cursor = connection.cursor()
+    sql = 'UPDATE POSTS SET CAPTION = %s WHERE ID = %s;'
+    cursor.execute(sql, [cap, post_id])
+
+    cursor.close()
+
+def deleteReply(reply_id):
+
+    cursor = connection.cursor()
+
+    sql = "DELETE FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = 'RPL';"
+    cursor.execute(sql, [reply_id])
+
+    sql = 'DELETE FROM COMMENT_REPLY WHERE ID = %s;'
+    cursor.execute(sql, [reply_id])
+
+    cursor.close()
+
+def deleteComment(comment_id):
+
+    cursor = connection.cursor()
+    sql = "SELECT ID FROM COMMENT_REPLY WHERE COMMENT_ID = %s;"
+    cursor.execute(sql, [comment_id])
+    r = cursor.fetchall()
+
+    for rr in r: deleteReply(rr[0])
+
+    sql = "DELETE FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = 'CMNT';"
+    cursor.execute(sql, [comment_id])
+
+    sql = 'DELETE FROM COMMENTS WHERE ID = %s;'
+    cursor.execute(sql, [comment_id])
+
+    cursor.close()
+
+def deletePost(post_id):
+
+    cursor = connection.cursor()
+    sql = "SELECT ID FROM COMMENTS WHERE POST_ID = %s AND CONTENT_TYPE = 'PST';"
+    cursor.execute(sql, [post_id])
+    r = cursor.fetchall()
+
+    for rr in r: deleteComment(rr[0])
+
+    sql = "DELETE FROM PHOTOS WHERE POST_ID = %s;"
+    cursor.execute(sql, [post_id])
+
+    sql = "DELETE FROM VIDEOS WHERE POST_ID = %s;"
+    cursor.execute(sql, [post_id])
+
+    sql = "DELETE FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = 'PST';"
+    cursor.execute(sql, [post_id])
+
+    sql = "DELETE FROM SAVED WHERE POST_ID = %s;"
+    cursor.execute(sql, [post_id])
+
+    sql = "DELETE FROM POSTS WHERE ID = %s;"
+    cursor.execute(sql, [post_id])
+
+    cursor.close()
+
+def deleteContent(request):
+    if request.is_ajax:
+
+        content_id = request.POST['content_id']
+        content_type = request.POST['content_type']
+
+        if content_type == 'CAP': editCaption(content_id, '')
+        elif content_type == 'RPL': deleteReply(content_id)
+        elif content_type == 'CMNT': deleteComment(content_id)
+        elif content_type == 'PST': deletePost(content_id)
+
+        return JsonResponse({})
+
+def changeCaption(request):
+    if request.is_ajax:
+
+        text = request.POST['text']
+        post_id = request.POST['post_id']
+
+        editCaption(post_id, text)
+        return JsonResponse({})
