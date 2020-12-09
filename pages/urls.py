@@ -21,4 +21,6 @@ urlpatterns = [
 
 
     path('post/<int:post_id>', views.post, name='post'),
+    path('addComment', views.addComment, name='addComment'),
+    path('addReply', views.addReply, name='addReply'),
 ]

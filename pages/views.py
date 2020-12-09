@@ -7,10 +7,10 @@ import os
 
 # Create your views here.
 
-def isLike(user_id, post_id):
+def isLike(user_id, post_id, content_type="PST"):
     cursor = connection.cursor()
-    sql = "SELECT COUNT(*) FROM LIKES WHERE USER_ID = %s AND POST_ID = %s;"
-    cursor.execute(sql, [user_id, post_id])
+    sql = "SELECT COUNT(*) FROM LIKES WHERE USER_ID = %s AND CONTENT_ID = %s AND CONTENT_TYPE = %s;"
+    cursor.execute(sql, [user_id, post_id, content_type])
     count = cursor.fetchone()
     cursor.close()
 
@@ -20,10 +20,10 @@ def isLike(user_id, post_id):
         return True;
 
 
-def totalLikes(post_id):
+def totalLikes(post_id, content_type="PST"):
     cursor = connection.cursor()
-    sql = "SELECT COUNT(*) FROM LIKES WHERE POST_ID = %s;"
-    cursor.execute(sql, [post_id])
+    sql = "SELECT COUNT(*) FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = %s;"
+    cursor.execute(sql, [post_id, content_type])
     total_likes = cursor.fetchone()
     return total_likes[0]
 
@@ -268,19 +268,20 @@ def create_story(request):
 def likes(request):
     if request.is_ajax:
         user_id = request.POST['user_id']
-        post_id = request.POST['post_id']
+        content_id = request.POST['content_id']
+        content_type = request.POST['content_type']
 
         cursor = connection.cursor()
 
-        if isLike(user_id, post_id):
-            sql = "DELETE FROM LIKES WHERE USER_ID = %s AND POST_ID = %s;"
-            cursor.execute(sql, [user_id, post_id])
+        if isLike(user_id, content_id, content_type):
+            sql = "DELETE FROM LIKES WHERE USER_ID = %s AND CONTENT_ID = %s AND CONTENT_TYPE = %s;"
+            cursor.execute(sql, [user_id, content_id, content_type])
         else:
-            sql = "INSERT INTO LIKES VALUES(%s,%s);"
-            cursor.execute(sql, [user_id, post_id])
+            sql = "INSERT INTO LIKES(USER_ID, CONTENT_ID, CONTENT_TYPE) VALUES(%s,%s,%s);"
+            cursor.execute(sql, [user_id, content_id, content_type])
         
         cursor.close()
-        return JsonResponse({'count': totalLikes(post_id)})
+        return JsonResponse({'count': totalLikes(content_id, content_type)})
 
 def saved(request):
     if request.is_ajax:
@@ -456,16 +457,12 @@ def like_list(request):
     if request.is_ajax:
 
         logged_user_id = request.GET['logged_user']
-        post_id = request.GET['post_id']
+        content_id = request.GET['content_id']
+        content_type = request.GET['content_type']
 
         cursor = connection.cursor()
-        sql = "SELECT USER_ID FROM POSTS WHERE ID = %s;"
-        cursor.execute(sql,[post_id])
-        main_user_id = cursor.fetchone()[0]
-
-
-        sql = "SELECT * FROM USERDATA WHERE ID = ANY(SELECT USER_ID FROM LIKES WHERE POST_ID = %s);"
-        cursor.execute(sql,[post_id])
+        sql = "SELECT * FROM USERDATA WHERE ID = ANY(SELECT USER_ID FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = %s);"
+        cursor.execute(sql,[content_id, content_type])
 
         users = []
         result = cursor.fetchall()
@@ -488,10 +485,10 @@ def like_list(request):
             }
             users.append(row)
         cursor.close()
+
         context ={
             'liked_user_list': users,
             'logged_user_id': logged_user_id,
-            'poster_id': main_user_id,
         }
         return JsonResponse(context)
 
@@ -667,6 +664,114 @@ def send_msg_to_partner(request):
 
 ###################### FOR POST
 
+def timeToAge(sss):
+
+    age = ""
+    for i in range(0,len(sss),2):
+        if int(sss[i]) != 0:
+            if sss[i+1] == 'Y':
+                if int(sss[i]) == 1: age = sss[i] + ' year ago'
+                else: age = sss[i] + ' years ago'
+            elif sss[i+1] == 'M':
+                if int(sss[i]) == 1: age = sss[i] + ' month ago'
+                else: age = sss[i] + ' months ago'
+            elif sss[i+1] == 'D':
+                if int(sss[i]) == 1: age = sss[i] + ' day ago'
+                else: age = sss[i] + ' days ago'
+            elif sss[i+1] == 'h':
+               if int(sss[i]) == 1: age = sss[i] + ' hour ago'
+               else: age = sss[i] + ' hours ago'
+            elif sss[i+1] == 'm':
+                 if int(sss[i]) == 1: age = sss[i] + ' minute ago'
+                 else: age = sss[i] + ' minutes ago'
+            elif sss[i+1] == 's':
+                if int(sss[i]) == 1: age = sss[i] + ' second ago'
+                else: age = sss[i] + ' seconds ago'
+            break
+    return age
+
+def getReply(comment_id, logged_user_id):
+
+    cursor = connection.cursor()
+    sql = "SELECT ID, USER_ID, TEXT, COMMENT_ID, AGE_OF_CONTENT(COMMENT_TIME) FROM COMMENT_REPLY WHERE COMMENT_ID = %s ORDER BY COMMENT_TIME;"
+    cursor.execute(sql, [comment_id])
+    r = cursor.fetchall()
+
+    data = []
+
+    for row in r:
+        reply_id = row[0]
+        replier_id = row[1]
+        reply_text = row[2]
+        comment_id = row[3]
+        reply_age = timeToAge(row[4].split())
+
+        sql = "SELECT USERNAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql, [replier_id])
+        rr = cursor.fetchone()
+
+        replier_username = rr[0]
+        replier_photo = rr[1]
+        is_like = isLike(logged_user_id, reply_id, 'RPL')
+        like_count = totalLikes(reply_id, 'RPL')
+
+        reply = {
+            'reply_id': reply_id,
+            'reply_age': reply_age,
+            'replier_id': replier_id,
+            'replier_username': replier_username,
+            'replier_photo': replier_photo,
+            'is_like': is_like,
+            'like_count': like_count,
+            'reply_text': reply_text,
+        }
+        data.append(reply)
+
+    cursor.close()
+    return data
+
+def getComment(post_id, logged_user_id):
+
+    cursor = connection.cursor()
+    sql = "SELECT ID, TEXT, AGE_OF_CONTENT(DATE_OF_COMMENT), POST_ID, USER_ID, CONTENT_TYPE FROM COMMENTS WHERE POST_ID = %s AND CONTENT_TYPE = 'PST' ORDER BY DATE_OF_COMMENT;"
+    cursor.execute(sql,[post_id])
+    r = cursor.fetchall()
+
+    data = []
+    for row in r:
+
+        comment_id = row[0]
+        comment_text = row[1]
+        comment_age = timeToAge(row[2].split())
+        commenter_id = row[4]
+
+        sql = "SELECT NAME, USERNAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql,[commenter_id])
+        rr = cursor.fetchone()
+
+        commenter_username = rr[1]
+        commenter_photo = rr[2]
+        commenter_name = rr[0]
+        comment_like_count = totalLikes(comment_id, 'CMNT')
+        comment_is_like = isLike(logged_user_id, comment_id, 'CMNT')
+
+        comment = {
+            'comment_id': comment_id,
+            'comment_text': comment_text,
+            'comment_age': comment_age,
+            'commenter_id': commenter_id,
+            'commenter_username': commenter_username,
+            'commenter_photo': commenter_photo,
+            'comment_is_like': comment_is_like,
+            'comment_like_count': comment_like_count,
+            'commenter_name': commenter_name,
+            'replies': getReply(comment_id, logged_user_id)
+        }
+        data.append(comment)
+
+    cursor.close()
+    return data
+
 def getPost(user_id, post_id):
 
     cursor = connection.cursor()
@@ -702,8 +807,10 @@ def getPost(user_id, post_id):
     isfollower = isFollowee(user_id, poster_id)
     isfollowee = isFollowee(user_id, poster_id)
 
-    print(timestamp)
-    print(creation_time)
+    sql = "SELECT AGE_OF_CONTENT(CREATION_DATE) FROM POSTS WHERE ID=%s;"
+    cursor.execute(sql,[post_id])
+    sss = cursor.fetchone()[0].split()
+    age = timeToAge(sss)
 
     if caption == 'None':
         caption = ""
@@ -718,6 +825,7 @@ def getPost(user_id, post_id):
         'user_id': user_id,
         'username': username,
         'post_id': post_id,
+        'age': age,
         'creation_time': creation_time,
         'caption': caption,
         'update_time': update_time,
@@ -734,8 +842,10 @@ def getPost(user_id, post_id):
         'age': age,
         'isFollower': isfollower,
         'isFollowee': isfollowee,
+        'comments': getComment(post_id, user_id),
         'mediaCount': range(1,photos.__len__() + videos.__len__() + 1,1),
     }
+    cursor.close()
     return data
 
 def post(request, post_id):
@@ -745,3 +855,81 @@ def post(request, post_id):
     user_id = request.session['user_id']
 
     return render(request, 'pages/post.html', getPost(user_id, post_id))
+
+def addComment(request):
+
+    if request.is_ajax:
+        commenter = request.POST['commenter']
+        post_id = request.POST['post_id']
+        comment = request.POST['comment']
+        creation_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        cursor = connection.cursor()
+        sql = "INSERT INTO COMMENTS(TEXT, DATE_OF_COMMENT, POST_ID, USER_ID, CONTENT_TYPE) VALUES(%s, %s, %s, %s, 'PST');"
+        cursor.execute(sql,[comment, creation_time, post_id, commenter])
+
+        sql = "SELECT ID FROM COMMENTS WHERE USER_ID = %s AND DATE_OF_COMMENT LIKE %s;"
+        cursor.execute(sql, [commenter, creation_time])
+        comment_id = cursor.fetchone()[0]
+        comment_age = "1 second ago"
+
+        sql = "SELECT USERNAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql, [commenter])
+        r = cursor.fetchone()
+
+        commenter_username = r[0]
+        commenter_id = commenter
+        commenter_photo = r[1]
+
+        data = {
+            'comment_id': comment_id,
+            'comment_age': comment_age,
+            'commenter_id': commenter_id,
+            'commenter_username': commenter_username,
+            'commenter_photo': commenter_photo,
+            'is_like': False,
+            'like_count': 0,
+            'comment_text': comment,
+        }
+        cursor.close()
+        return JsonResponse(data)
+
+def addReply(request):
+    if request.is_ajax:
+        replier_id = request.POST['replier']
+        comment_id = request.POST['comment_id']
+        reply_text = request.POST['reply']
+        creation_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        cursor = connection.cursor()
+        sql = "INSERT INTO COMMENT_REPLY(USER_ID, TEXT, COMMENT_ID, COMMENT_TIME) VALUES(%s, %s, %s, %s);"
+        cursor.execute(sql, [replier_id, reply_text, comment_id, creation_time])
+
+        sql = "SELECT ID FROM COMMENT_REPLY WHERE USER_ID = %s AND COMMENT_TIME LIKE %s;"
+        cursor.execute(sql, [replier_id, creation_time])
+        reply_id = cursor.fetchone()[0]
+
+        reply_age = "1 second ago"
+        is_like = False
+        like_count = 0
+
+        sql = "SELECT USERNAME, PROFILE_PIC FROM USERDATA WHERE ID=%s;"
+        cursor.execute(sql, [replier_id])
+        r = cursor.fetchone()
+
+        replier_username = r[0]
+        replier_photo = r[1]
+
+        data = {
+            'reply_id': reply_id,
+            'reply_age': reply_age,
+            'replier_id': replier_id,
+            'replier_username': replier_username,
+            'replier_photo': replier_photo,
+            'is_like': is_like,
+            'like_count': like_count,
+            'reply_text': reply_text,
+            'comment_id': comment_id,
+        }
+        cursor.close()
+        return JsonResponse(data)

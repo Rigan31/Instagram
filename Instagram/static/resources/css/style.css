@@ -630,12 +630,12 @@ nav{
 
 .post-container-in-post{
     position: absolute;
-    left: calc(calc(100% - 950px)/2);
-    width: 950px;
+    left: calc(calc(100% - 1150px)/2);
+    width: 1150px;
     top: 90px;
     min-width: 500px;
     z-index: 0;
-    height: 700px;
+    height: 800px;
     border: 1px solid lightgrey;
 }
 
@@ -657,6 +657,9 @@ nav{
     left: 0;
     right: 0;
     margin: auto;
+    display: none;
+    animation-name: fade-media;
+    animation-duration: 1.5s;
 }
 
 .right-side-of-post{
@@ -679,7 +682,7 @@ nav{
 }
 
 .right-side-of-post .mid{
-    top: 72%;
+    top: 76%;
 }
 
 .right-side-of-post .bottom{
@@ -694,27 +697,33 @@ nav{
     padding-top: 5px;
 }
 
+.top-bar-of-post-right a{
+    display: block;
+    border-radius: 50%;
+    margin-left: 15px;
+    margin-top: 15px;
+}
+
 .top-bar-of-post-right h3 {
     position: relative;
-    top: 25px;
-    left: 8px;
-    text-decoration: none;
+    margin-left: 0px !important;
+    top: -2px;
+    left: -5px;
+    display: inline-block;
 }
 
 .profile-photo-in-topbar{
-    width: 44px;
-    height: 44px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     float: left;
-    margin-left: 15px;
-    margin-top: 15px;
     border: 1px solid purple;
 }
 
 .footer-of-post-right {
     width: 100%;
     position: absolute;
-    top: 73%;
+    top: 77%;
     padding: 7px 12px 7px 13px;
 }
 
@@ -838,7 +847,7 @@ nav{
 }
 
 .text-in-post-view{
-    top: 80%;
+    top: 83%;
     width: 100%;
     position: absolute;
     line-height: 27px;
@@ -849,7 +858,7 @@ nav{
     width: 100%;
     position: absolute;
     top: 13%;
-    height: 412px;
+    height: 63%;
     overflow-y: auto;
 
 }
@@ -859,43 +868,56 @@ nav{
     position: relative;
     display: flex;
     padding-bottom: 13px;
+    margin-bottom: 5px;
+    min-height: 120px;
+}
 
+.caption-of-post a{
+    display: block;
+    border-radius: 50%;
+    margin-left: 15px;
+    margin-top: 15px;
+    height: max-content;
 }
 
 .caption-of-post h3 {
-    position: relative;
-    top: 20px;
-    left: 8px;
-    width: 90%;
-}
-
-.middle-of-post-right br{
-    border: 1px solid red;
+    position: absolute;
+    top: 5px;
+    left: 60px;
 }
 
 .caption-of-post span {
     position: relative;
-    width: 80%;
+    width: 70%;
+    margin-left: 10px;
     overflow-wrap: break-word;
     overflow-x: hidden;
     line-height: 20px;
+    margin-top: 40px;
 }
 
 .caption-comment{
+    width: 70% !important;
+    margin-left: 15% !important;
+}
 
+.comment-separator{
+    margin: 30px 20% 0px 33% !important;
+    position: relative !important;
+    width: 37% !important;
 }
 
 .comment-container{
     width: 100%;
     position: relative;
-    margin-top: 7px;
+    margin-top: 10px;
     overflow-y: auto;
 }
 
 .comment-of-post {
     position: relative;
     width: 100%;
-    margin-bottom: 5px;
+    padding-bottom: 5px;;
 }
 
 .comment-portion{
@@ -904,20 +926,29 @@ nav{
     position: relative;
 }
 
+.comment-portion a{
+    display: block;
+    border-radius: 50%;
+    margin-left: 15px;
+    margin-top: 15px;
+    height: max-content;
+}
+
 .comment-portion h3{
-    position: relative;
-    top: 20px;
-    left: 8px;
-    width: 90%;
+    position: absolute;
+    top: 5px;
+    left: 60px;
 
 }
 
 .comment-portion span {
     position: relative;
-    width: 70%;
+    width: 73%;
+    margin-left: 10px;
     overflow-wrap: break-word;
     overflow-x: hidden;
     line-height: 20px;
+    margin-top: 40px;
 }
 
 .like-for-comment{
@@ -928,25 +959,35 @@ nav{
 
 .reply-portion{
     position: relative;
-    width: 86%;
+    width: 85%;
     margin-left: 14%;
     display: flex;
+    margin-top: 2px;
+}
+
+.reply-portion a{
+    border-radius: 50%;
+    display: block;
+    margin-left: 15px;
+    margin-top: 15px;
+    height: max-content;
 }
 
 .reply-portion h3{
-    position: relative;
-    top: 20px;
-    left: 8px;
-    width: 90%;
+    position: absolute;
+    top: 5px;
+    left: 60px;
 
 }
 
 .reply-portion span {
     position: relative;
-    width: 66%;
+    width: 70%;
+    margin-left: 10px;
     overflow-wrap: break-word;
     overflow-x: hidden;
     line-height: 20px;
+    margin-top: 40px;
 }
 
 .like-for-reply{
@@ -995,4 +1036,15 @@ nav{
 }
 .reply-button:active{
     padding-top: 1px;
+}
+
+/* CHANGES OF 8-12-2020 */
+
+@keyframes fade-media {
+    FROM{
+        opacity: 0.4;
+    }
+    TO{
+        opacity: 1;
+    }
 }
