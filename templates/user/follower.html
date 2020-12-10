@@ -14,16 +14,29 @@
                     </div>
                     <div class="searchee_name">
                         <a href="{% url 'profile' follower.id %}">{{ follower.name }}</a>
+
+                        <hr />
+                        <span>
+                            <p>{{ follower.username }}</p>
+                            <a href="http://127.0.0.1:8000/user/{{ follower.id }}/follower">Follower {{ follower.follower_count }}</a>
+                            <a href="http://127.0.0.1:8000/user/{{ follower.id }}/followee">Following {{ follower.followee_count }}</a>
+
+                            <br />
+                            <div class="profile-another-link">
+                                  <a href="{{ follower.fb_link }}"><i class="fa fa-facebook"></i></a>
+                                  <a href="{{ follower.tw_link }}"><i class="fa fa-twitter"></i></a>
+                            </div>
+                        </span>
                     </div>
                     <div class="searchee_follow">
                         {%csrf_token%}
                         {% if user_id != follower.id %}
                             {% if follower.isFollowee %}
-                                <button onClick="follow_button(this, '{{ user_id}}', '{{ follower.id }}', 2)">Unfollow</button>
+                                <button onClick="follow_button(this, '{{ user_id}}', '{{ follower.id }}', 2,1)">Unfollow</button>
                             {% elif follower.isFollower %}
-                                <button onClick="follow_button(this, '{{ user_id}}', '{{ follower.id }}', 2)">Follow back</button>
+                                <button onClick="follow_button(this, '{{ user_id}}', '{{ follower.id }}', 2,1)">Follow back</button>
                             {% else %}
-                                <button onClick="follow_button(this, '{{ user_id}}', '{{ follower.id }}', 2)">Follow</button>
+                                <button onClick="follow_button(this, '{{ user_id}}', '{{ follower.id }}', 2,1)">Follow</button>
                             {% endif %}
                         {% endif %}
                     </div>

@@ -3,6 +3,7 @@ from django.db import connection
 from django.core.files.storage import FileSystemStorage
 from django.db.models.functions.datetime import datetime
 from django.http import JsonResponse
+
 import os
 
 # Create your views here.
@@ -121,6 +122,29 @@ def getStories1(user_id):
     return stories
 
 ##### new stories code
+
+
+def getEachUserStories(storier_id):
+    cursor = connection.cursor()
+    sql = "SELECT LOCATION, AGE_OF_CONTENT(DATE_OF_STORY) FROM STORY WHERE USER_ID = %s AND TRUNC(SYSDATE-DATE_OF_STORY) < 1 ORDER BY DATE_OF_STORY DESC;"
+    cursor.execute(sql, [storier_id])
+    result = cursor.fetchall()
+
+    if len(result) == 0:
+        return 
+
+    stories_info = []
+    for story in result:
+        row = {
+            'story_path': story[0],
+            'creation_time': story[1],
+        }
+        stories_info.append(row)
+    
+    return stories_info
+
+
+
 def getStories(user_id):
     cursor = connection.cursor()
     
@@ -136,38 +160,26 @@ def getStories(user_id):
     
     stories = []
     for storier_id in stories_user_list:
-        sql = "SELECT LOCATION, DATE_OF_STORY FROM STORY WHERE USER_ID = %s AND TRUNC(SYSDATE-DATE_OF_STORY) < 1 ORDER BY DATE_OF_STORY DESC;"
-        cursor.execute(sql, [storier_id])
-        result = cursor.fetchall()
+        stories_info = getEachUserStories(storier_id)
+        if stories_info:
+            sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+            cursor.execute(sql, [storier_id])
+            storier_info = cursor.fetchone()
+            storier_name = storier_info[0]
+            storier_photo = storier_info[1]
 
-        if len(result) == 0:
-            continue
-
-        stories_info = []
-        for story in result:
-            row = {
-                'story_path': story[0],
-                'creation_time': story[1],
+            story_row = {
+                'storier_id': storier_id,
+                'storier_name': storier_name,
+                'storier_photo': storier_photo,
+                'stories_info': stories_info,
+                'mediaCount': range(1,stories_info.__len__()+1,1),
             }
-            stories_info.append(row)
-            
-            
-        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
-        cursor.execute(sql, [storier_id])
-        storier_info = cursor.fetchone()
-        storier_name = storier_info[0]
-        storier_photo = storier_info[1]
-
-        story_row = {
-            'storier_id': storier_id,
-            'storier_name': storier_name,
-            'storier_photo': storier_photo,
-            'stories_info': stories_info,
-            'mediaCount': range(1,stories_info.__len__()+1,1),
-        }
-        stories.append(story_row)
+            stories.append(story_row)
     
     return stories
+
+
 
 
 
@@ -376,12 +388,33 @@ def isFollower(user_id, searchee_id):
     else:
         return True
 
+
+def followee_count(user_id):
+    cursor = connection.cursor()
+    sql = "SELECT COUNT(FOLLOWEE_ID) FROM FOLLOW WHERE FOLLOWER_ID = %s;"
+    cursor.execute(sql, [user_id])
+    following = cursor.fetchone()
+    following = following[0]
+
+    cursor.close()
+    return following
+
+def follower_count(user_id):
+    cursor = connection.cursor()
+    sql = "SELECT COUNT(FOLLOWER_ID) FROM FOLLOW WHERE FOLLOWEE_ID = %s;"
+    cursor.execute(sql, [user_id])
+    following = cursor.fetchone()
+    following = following[0]
+
+    cursor.close()
+    return following
+
 def searchUsers(user_id, value):
     cursor = connection.cursor()
     value = value.lower()
     almostValue = '%'+value+'%'
 
-    sql = "SELECT ID, NAME, PROFILE_PIC FROM USERDATA WHERE LOWER(NAME) LIKE %s OR LOWER(USERNAME) LIKE %s;"
+    sql = "SELECT ID, NAME, PROFILE_PIC, USERNAME, FACEBOOK_LINK, TWITTER_LINK FROM USERDATA WHERE LOWER(NAME) LIKE %s OR LOWER(USERNAME) LIKE %s;"
     cursor.execute(sql, [almostValue, almostValue])
     result = cursor.fetchall()
     cursor.close()
@@ -392,6 +425,11 @@ def searchUsers(user_id, value):
             'searchee_id': r[0],
             'searchee_name': r[1],
             'searchee_photo': r[2],
+            'searchee_username': r[3],
+            'searchee_follower': follower_count(r[0]),
+            'searchee_followee': followee_count(r[0]),
+            'searchee_fb': r[4],
+            'searchee_tw': r[5],
             'isFollowee': isFollowee(user_id, r[0]),
             'isFollower': isFollower(user_id, r[0]),
         }
@@ -738,7 +776,31 @@ def timeToAge(sss):
                 if int(sss[i]) == 1: age = sss[i] + ' second ago'
                 else: age = sss[i] + ' seconds ago'
             break
+
+    if age == "": age = '0 second ago'
     return age
+
+def addLinkToText(text):
+
+    text = str(text)
+
+    if text[0] != '@': return (text, -1, '')
+
+    k = 0
+    for i in range(1,len(text),1):
+        if text[i] == ' ':
+            k = i
+            break
+    username = text[1:k]
+    cursor = connection.cursor()
+    sql = "SELECT ID FROM USERDATA WHERE USERNAME = %s;"
+    cursor.execute(sql, [username])
+
+    try: id = cursor.fetchone()[0]
+    except: return (text, -1, '')
+
+    text = text[k:]
+    return (text, id, username)
 
 def getReply(comment_id, logged_user_id):
 
@@ -755,6 +817,8 @@ def getReply(comment_id, logged_user_id):
         reply_text = row[2]
         comment_id = row[3]
         reply_age = timeToAge(row[4].split())
+
+        (reply_text_without_link, replied_to, replied_to_username) = addLinkToText(reply_text)
 
         sql = "SELECT USERNAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
         cursor.execute(sql, [replier_id])
@@ -773,7 +837,9 @@ def getReply(comment_id, logged_user_id):
             'replier_photo': replier_photo,
             'is_like': is_like,
             'like_count': like_count,
-            'reply_text': reply_text,
+            'reply_text': reply_text_without_link,
+            'replied_to': replied_to,
+            'replied_to_username': replied_to_username,
         }
         data.append(reply)
 
@@ -917,32 +983,9 @@ def addComment(request):
         cursor = connection.cursor()
         sql = "INSERT INTO COMMENTS(TEXT, DATE_OF_COMMENT, POST_ID, USER_ID, CONTENT_TYPE) VALUES(%s, %s, %s, %s, 'PST');"
         cursor.execute(sql,[comment, creation_time, post_id, commenter])
-
-        sql = "SELECT ID FROM COMMENTS WHERE USER_ID = %s AND DATE_OF_COMMENT LIKE %s;"
-        cursor.execute(sql, [commenter, creation_time])
-        comment_id = cursor.fetchone()[0]
-        comment_age = "1 second ago"
-
-        sql = "SELECT USERNAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
-        cursor.execute(sql, [commenter])
-        r = cursor.fetchone()
-
-        commenter_username = r[0]
-        commenter_id = commenter
-        commenter_photo = r[1]
-
-        data = {
-            'comment_id': comment_id,
-            'comment_age': comment_age,
-            'commenter_id': commenter_id,
-            'commenter_username': commenter_username,
-            'commenter_photo': commenter_photo,
-            'is_like': False,
-            'like_count': 0,
-            'comment_text': comment,
-        }
         cursor.close()
-        return JsonResponse(data)
+
+        return JsonResponse({})
 
 def addReply(request):
     if request.is_ajax:
@@ -954,41 +997,13 @@ def addReply(request):
         cursor = connection.cursor()
         sql = "INSERT INTO COMMENT_REPLY(USER_ID, TEXT, COMMENT_ID, COMMENT_TIME) VALUES(%s, %s, %s, %s);"
         cursor.execute(sql, [replier_id, reply_text, comment_id, creation_time])
-
-        sql = "SELECT ID FROM COMMENT_REPLY WHERE USER_ID = %s AND COMMENT_TIME LIKE %s;"
-        cursor.execute(sql, [replier_id, creation_time])
-        reply_id = cursor.fetchone()[0]
-
-        reply_age = "1 second ago"
-        is_like = False
-        like_count = 0
-
-        sql = "SELECT USERNAME, PROFILE_PIC FROM USERDATA WHERE ID=%s;"
-        cursor.execute(sql, [replier_id])
-        r = cursor.fetchone()
-
-        replier_username = r[0]
-        replier_photo = r[1]
-
-        data = {
-            'reply_id': reply_id,
-            'reply_age': reply_age,
-            'replier_id': replier_id,
-            'replier_username': replier_username,
-            'replier_photo': replier_photo,
-            'is_like': is_like,
-            'like_count': like_count,
-            'reply_text': reply_text,
-            'comment_id': comment_id,
-        }
         cursor.close()
-        return JsonResponse(data)
+
+        return JsonResponse({})
 
 
 ### 10-12-2020
 ######################################################
-
-
 def editCaption(post_id, cap):
 
     cursor = connection.cursor()
@@ -1058,10 +1073,12 @@ def deleteContent(request):
         content_id = request.POST['content_id']
         content_type = request.POST['content_type']
 
-        if content_type == 'CAP': editCaption(content_id, '')
+        if content_type == 'CAP':
+            editCaption(content_id, '')
         elif content_type == 'RPL': deleteReply(content_id)
         elif content_type == 'CMNT': deleteComment(content_id)
-        elif content_type == 'PST': deletePost(content_id)
+        elif content_type == 'PST':
+            deletePost(content_id)
 
         return JsonResponse({})
 
@@ -1072,4 +1089,5 @@ def changeCaption(request):
         post_id = request.POST['post_id']
 
         editCaption(post_id, text)
+        addTag(text, post_id)
         return JsonResponse({})

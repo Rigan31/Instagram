@@ -562,7 +562,6 @@ nav{
 
 .fa{
     cursor: pointer;
-    color: black;
 }
 
 .icon{
@@ -1141,3 +1140,17 @@ nav{
     margin-top:6px;
     margin-bottom: 0px;
 }
+
+
+/*#########################################################*/
+/* CHANGES OF THURSDAY */
+
+.link-in-comment{
+    margin-left: 0px !important;
+    display: inline !important;
+    font-weight: bold;
+    font-size: 18px;
+    color: cornflowerblue;
+    text-decoration: underline;
+}
+

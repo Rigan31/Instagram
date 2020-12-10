@@ -68,10 +68,20 @@ function likes(user, content_id, x, content_type='PST'){
             var y;
 
             if(content_type == 'PST') y = x.parentElement.parentElement.parentElement.parentElement;
-            else if(content_type == 'CMNT' || content_type=='RPL'){
+            else if(content_type == 'CMNT'){
                 var zz = x.parentElement.parentElement.parentElement;
                 zz = zz.children[2]
                 zz = zz.children[1]
+                y = zz.children[1]
+
+                if(response.count < 2) y.innerHTML = response.count + ' like';
+                else y.innerHTML = response.count + ' likes';
+                return ;
+            }
+            else if(content_type == 'RPL'){
+                var zz = x.parentElement.parentElement.parentElement;
+                zz = zz.children[2]
+                zz = zz.children[2]
                 y = zz.children[1]
 
                 if(response.count < 2) y.innerHTML = response.count + ' like';
@@ -114,7 +124,7 @@ function saved(user, post, x){
     })
 }
 
-function follow(x, user, followee){
+function follow(x, user, followee, reload = 0){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
     console.log(user)
     console.log(followee)
@@ -130,12 +140,12 @@ function follow(x, user, followee){
         success:function(response){
             //$(x).toggleClass("fa-bookmark fa-bookmark-o")
             x.innerHTML = response.newMsg
-    
         }
     })
+    if(reload==1) location.reload()
 }
 
-function follow_button(x, user, followee, mm){
+function follow_button(x, user, followee, mm, reload=0){
     var csrf = $("input[name=csrfmiddlewaretoken]").val()
     console.log(user)
     console.log(followee)
@@ -155,29 +165,50 @@ function follow_button(x, user, followee, mm){
                 x.parentElement.parentElement.style.display = "none"
         }
     })
+    if(reload==1) location.reload()
 }
 
-function modalTheimage(x, stories_info, name, id){
-    var c = x.parentElement.children
+function modalTheimage(stories_info, name, id, mediaCount){
+    //var c = x.parentElement.children
     //var modal = c[1]
     //var modalImg = modal.children[1]
 
-    console.log()
-    var modal = document.getElementById('myModal');
-    var modalImg = modal.children[1];
+    //console.log()
+    //var modal = document.getElementById('myModal');
+    //var modalImg = modal.children[1];
 
-    modal.style.display = "block";
-    modalImg.src = story_path;
-    c[2].style.borderColor = "white"
+    //modal.style.display = "block";
+    //modalImg.src = story_path;
+    //c[2].style.borderColor = "white"
+    console.log(stories_info)
 
 
 
     var span = '<span class="close" onclick="closeThemodal(this)">&times;</span>'
-    //<div id="myModal" class="modal">
-      //  <span class="close" onclick="closeThemodal(this)">&times;</span>
-        //<img class="modal-content" id="img01">
-    //</div>
+    var div = '<div class="media-in-story">'
 
+    console.log(div)
+    for(var i = 0; i < stories_info.length; i++){
+        var img = '<img src="'+stories_info[i].story_path+'" class="modal-content">'
+        div = div+img
+    }
+
+    console.log(div)
+
+    var a1 = '<a class="button-in-post prev" onclick="slideMedia(this, '+stories_info +', [] , -1)">&#10094;</a>'
+    div = div+a1
+    console.log(mediaCount, "mediacount")
+    if(mediaCount.length > 1){
+        var a2 = '<a class="button-in-post prev" onclick="slideMedia(this, '+stories_info +', [] , -1)">&#10094;</a>'
+        div = div+a2
+    
+    }
+    div = div+'</div>'
+    var modal = document.getElementById('myModal');
+    modal.innerHTML = ""
+    $(modal).append(span)
+    $(modal).append(div)
+    modal.style.display = "block"
 
 }
 
@@ -532,32 +563,7 @@ function addComment(x, logged_user_id, post_id){
             comment: comment,
             csrfmiddlewaretoken: csrf
         }, success: function (response) {
-
-            var comment_id = response.comment_id;
-            var comment_age = response.comment_age;
-            var commenter_id = response.commenter_id;
-            var commenter_username = response.commenter_username;
-            var commenter_photo = response.commenter_photo;
-            var is_like = response.is_like;
-            var like_count = response.like_count;
-            var comment_text = response.comment_text;
-
-            console.log('comment html e ashche')
-            console.log(comment_id);
-            console.log(comment_age);
-            console.log(comment_text);
-            console.log(commenter_id);
-            console.log(commenter_username);
-            console.log(commenter_photo);
-            console.log(is_like);
-            console.log(like_count);
-
-            var div = document.getElementsByClassName('comment-container')[0];
-            var html = "";
-
-            /*add whole comment-of-post class */
-
-            div.append(html)
+            location.reload()
         }
     })
 }
@@ -579,81 +585,9 @@ function addReply(x, logged_user_id, comment_id){
             reply: reply,
             csrfmiddlewaretoken: csrf
         },success: function (response) {
-
-            var reply_id = response.reply_id;
-            var reply_age = response.reply_age;
-            var replier_id = response.replier_id;
-            var replier_username = response.replier_username;
-            var replier_photo = response.replier_photo;
-            var is_like = response.is_like;
-            var like_count = response.like_count;
-            var reply_text = response.reply_text;
-            var comment_id = response.comment_id;
-
-            console.log(reply_id);
-            console.log(reply_age);
-            console.log(replier_id);
-            console.log(replier_username);
-            console.log(replier_photo);
-            console.log(is_like);
-            console.log(like_count);
-            console.log(reply_text);
-            console.log(comment_id);
-
+            location.reload()
         }
     })
-
-
-    /*
-    var bleh = x.parentElement.children[1];
-    var  = bleh.value;
-    var csrf = $("input[name=csrfmiddlewaretoken]").val()
-
-    if(replying != 0) {
-        addReply(x,logged_user_id,content_id);
-        return ;
-    }
-
-    bleh.value = '';
-    $.ajax({
-        method: 'POST',
-        url: 'http://' + window.location.hostname + ':' + window.location.port + '/addComment',
-        data: {
-            commenter: logged_user_id,
-            post_id: content_id,
-            comment: comment,
-            csrfmiddlewaretoken: csrf
-        }, success: function (response) {
-
-            var comment_id = response.comment_id;
-            var comment_age = response.comment_age;
-            var commenter_id = response.commenter_id;
-            var commenter_username = response.commenter_username;
-            var commenter_photo = response.commenter_photo;
-            var is_like = response.is_like;
-            var like_count = response.like_count;
-            var comment_text = response.comment_text;
-
-            console.log('comment html e ashche')
-            console.log(comment_id);
-            console.log(comment_age);
-            console.log(comment_text);
-            console.log(commenter_id);
-            console.log(commenter_username);
-            console.log(commenter_photo);
-            console.log(is_like);
-            console.log(like_count);
-
-            var div = document.getElementsByClassName('comment-container')[0];
-            var html = "";
-
-            /*add whole comment-of-post class *//*
-
-            div.append(html)
-        }
-    })
-    */
-
 }
 
 

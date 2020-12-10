@@ -3,22 +3,6 @@
     margin: 80px auto 20px auto;
 }
 
-.search-users-body{
-    width: 35%;
-    margin: 80px auto 20px auto;
-    padding: 20px;
-    background-color: white;
-    border: 1px solid rgb(180,182,184);
-    border-radius: 15px;
-}
-
-.search_users{
-    padding: 15px;
-    border: 0.3px solid rgb(218, 218, 218);
-    border-radius: 10px;
-    margin-bottom: 18px;
-}
-
 .search_users:last-child{
     margin-bottom: 0px;
 }
@@ -35,12 +19,6 @@
     height: 100%;
     border-radius: 15px;
     border: 0.5px solid  rgb(218, 218, 218);
-}
-
-.searchee_name{
-    float: left;
-    margin-left: 15px;
-    margin-top: 40px;
 }
 
 .searchee_name a{
@@ -64,3 +42,69 @@
     border: 1px solid rgb(31,140,235);
     cursor: pointer;
 }
+
+
+/*#################################*/
+
+
+.search-users-body{
+    width: 35%;
+    margin: 40px auto 20px auto;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid rgb(180,182,184);
+    border-radius: 15px;
+    min-width: 600px;
+}
+
+@media (max-width: 1000px){
+    .search-users-body{
+        margin-left: 200px;
+    }
+}
+
+.search_users{
+    padding: 15px;
+    padding-bottom: 10px;
+    border: 0.3px solid rgb(218, 218, 218);
+    border-radius: 10px;
+    margin-bottom: 18px;
+}
+
+.searchee_name{
+    float: left;
+    margin-left: 15px;
+    margin-top: 7px;
+}
+
+.searchee_name hr{
+    border: 1px solid white;
+    margin: 0px;
+    margin-top: 8px;
+}
+
+.searchee_name span{
+    position: relative;
+    top: -10px;
+    line-height: 1.5;
+}
+
+.searchee_name span p{
+    color: slategray;
+    font-size: 18px;
+    padding: 0px;
+}
+
+.searchee_name span a{
+    color: cornflowerblue;
+    margin-right: 10px
+}
+
+.searchee_name span a:active, .searchee_name span a:hover{
+    color: deepskyblue;
+    text-decoration: underline;
+}
+
+.searchee_name a:hover, .searchee_name a:active{
+    color: #0066ff;
+}   

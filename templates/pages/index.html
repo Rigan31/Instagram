@@ -13,7 +13,7 @@
 
             {% for story in stories %}
                 <div class="story">
-                        <img src="{{ story.stories_info.0.story_path }}" class="story-photo" onclick="modalTheimage(this, '{{story.stories_info}}', '{{storier_name}}', '{{storier_id}}')">
+                        <img src="{{ story.stories_info.0.story_path }}" class="story-photo" onclick="modalTheimage({{story.stories_info| safe}}, '{{story.storier_name}}', '{{story.storier_id}}', '{{ story.mediaCount}}')">
                         <div class="storier_photo">
                             <a href=""><img src="{{ story.storier_photo }}"></a>
                         </div>
@@ -122,8 +122,7 @@
     </div>
 
     <div id="myModal" class="modal">
-        <span class="close" onclick="closeThemodal(this)">&times;</span>
-        <img class="modal-content" id="img01">
+        
     </div>
 
     <div class="optional">

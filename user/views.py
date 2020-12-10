@@ -7,7 +7,7 @@ from django.http import JsonResponse
 
 def isLike(user_id, post_id):
     cursor = connection.cursor()
-    sql = "SELECT COUNT(*) FROM LIKES WHERE USER_ID = %s AND POST_ID = %s;"
+    sql = "SELECT COUNT(*) FROM LIKES WHERE USER_ID = %s AND CONTENT_ID = %s AND CONTENT_TYPE = 'PST';"
     cursor.execute(sql, [user_id, post_id])
     count = cursor.fetchone()
     cursor.close()
@@ -20,7 +20,7 @@ def isLike(user_id, post_id):
 
 def totalLikes(post_id):
     cursor = connection.cursor()
-    sql = "SELECT COUNT(*) FROM LIKES WHERE POST_ID = %s;"
+    sql = "SELECT COUNT(*) FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = 'PST';"
     cursor.execute(sql, [post_id])
     total_likes = cursor.fetchone()
     return total_likes[0]
@@ -205,6 +205,28 @@ def isFollower(user_id, searchee_id):
     else:
         return True
 
+
+def followee_count(user_id):
+    cursor = connection.cursor()
+    sql = "SELECT COUNT(FOLLOWEE_ID) FROM FOLLOW WHERE FOLLOWER_ID = %s;"
+    cursor.execute(sql, [user_id])
+    following = cursor.fetchone()
+    following = following[0]
+
+    cursor.close()
+    return following
+
+def follower_count(user_id):
+    cursor = connection.cursor()
+    sql = "SELECT COUNT(FOLLOWER_ID) FROM FOLLOW WHERE FOLLOWEE_ID = %s;"
+    cursor.execute(sql, [user_id])
+    following = cursor.fetchone()
+    following = following[0]
+
+    cursor.close()
+    return following
+
+
 def user_following(user_id, observer_id):
     if user_id == observer_id:
         cursor = connection.cursor()
@@ -214,12 +236,17 @@ def user_following(user_id, observer_id):
         
         following = []
         for r in result:
-            sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+            sql = "SELECT NAME, PROFILE_PIC, USERNAME, FACEBOOK_LINK, TWITTER_LINK FROM USERDATA WHERE ID = %s;"
             cursor.execute(sql, [r[0]])
             info = cursor.fetchone()
             row = {
                 'name': info[0],
                 'profile_photo': info[1],
+                'username': info[2],
+                'fb_link': info[3],
+                'tw_link': info[4],
+                'follower_count': follower_count(r[0]),
+                'followee_count': followee_count(r[0]),
                 'isFollowee': isFollowee(user_id, r[0]),
                 'isFollower': isFollower(user_id, r[0]),
                 'id': r[0],
@@ -238,12 +265,17 @@ def user_follower(user_id, observer_id):
         
         follower = []
         for r in result:
-            sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+            sql = "SELECT NAME, PROFILE_PIC, USERNAME, FACEBOOK_LINK, TWITTER_LINK FROM USERDATA WHERE ID = %s;"
             cursor.execute(sql, [r[0]])
             info = cursor.fetchone()
             row = {
                 'name': info[0],
                 'profile_photo': info[1],
+                'username': info[2],
+                'fb_link': info[3],
+                'tw_link': info[4],
+                'follower_count': follower_count(r[0]),
+                'followee_count': followee_count(r[0]),
                 'isFollowee': isFollowee(user_id, r[0]),
                 'isFollower': isFollower(user_id, r[0]),
                 'id': r[0],

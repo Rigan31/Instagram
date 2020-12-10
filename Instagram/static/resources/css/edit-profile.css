@@ -1,9 +1,3 @@
-.edit-profile-body{
-  width: 70%;
-  margin: 100px auto 0px auto;
-  padding: 20px;
-}
-
 .edit-profile-option{
   width: 150px;
   height: 100%;
@@ -202,4 +196,13 @@
 .edit-profile-photo-submit{
   width: 50%;
   margin: 40px auto 10px auto;
+}
+
+/*###############################################*/
+
+.edit-profile-body{
+  width: 70%;
+  margin: 100px auto 0px auto;
+  padding: 20px;
+  min-width: 1300px;
 }
