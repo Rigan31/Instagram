@@ -169,14 +169,9 @@ function follow_button(x, user, followee, mm, reload=0){
 }
 
 function modalTheimage(stories_info, name, id, mediaCount){
-    console.log(stories_info)
-
-
-
     var span = '<span class="close" onclick="closeThemodal(this)">&times;</span>'
     var div = '<div class="media-in-story">'
 
-    console.log(div)
     for(var i = 0; i < stories_info.length; i++){
         if(i == 0)
             var img = '<img src="'+stories_info[i].story_path+'" style="display: block !important;" class="story-photo-in-story">'
@@ -184,22 +179,17 @@ function modalTheimage(stories_info, name, id, mediaCount){
             var img = '<img src="'+stories_info[i].story_path+'" class="story-photo-in-story">'
         div = div+img
     }
-
-    console.log(div)
-
     var stories_photo = new Array()
     for(var i = 0; i < stories_info.length; i++){
 
         stories_photo.push(stories_info[i].story_path)
     }
 
-    console.log(stories_photo)
-    var a1 = '<a class="button-in-post prev" onclick="slideMedia(this, '+stories_photo +', [] , -1)">&#10094;</a>'
+    var a1 = '<a class="button-in-post prev" onclick="slideMedia2(this, -1)">&#10094;</a>'
     div = div+a1
     if(mediaCount > 1){
-        var a2 = '<a class="button-in-post next" onclick="slideMedia(this, '+stories_photo+', [] , 1)">&#10095;</a>'
+        var a2 = '<a class="button-in-post next" onclick="slideMedia2(this, 1)">&#10095;</a>'
         div = div+a2
-    
     }
     div = div + '<div class="dot-container-on-media">'
     for(var i = 1; i <= mediaCount; i++){
@@ -213,8 +203,6 @@ function modalTheimage(stories_info, name, id, mediaCount){
     }
     div = div + '</div>'
 
-    console.log(div)
-
     div = div + '</div>'
     var modal = document.getElementById('myModal');
     modal.innerHTML = ""
@@ -227,6 +215,44 @@ function modalTheimage(stories_info, name, id, mediaCount){
 function closeThemodal(x) { 
     x.parentElement.style.display = "none";
 }
+
+var mediaIndex2 = 0
+function slideMedia2(){
+    var x = arguments[0]
+    var add = arguments[arguments.length-1]
+
+    var photos = document.querySelectorAll('.story-photo-in-story')
+
+    var div = x.parentElement;
+    
+    var prev = div.children[ photos.length + 0];
+    var next = div.children[photos.length + 1];
+    var dotDiv = div.children[photos.length  + 2];
+
+    var count = photos.length
+
+    prev.style.display = 'block';
+    next.style.display = 'block';
+    for(var i=0; i<dotDiv.children.length; i++) dotDiv.children[i].style.backgroundColor = '#bbb';
+
+    if(add==1 && mediaIndex2+1<count) mediaIndex2 = mediaIndex2+1;
+    else if(add==-1 && mediaIndex2-1>=0) mediaIndex2 = mediaIndex2-1;
+
+    if(mediaIndex2 == count-1) next.style.display = 'None';
+    if(mediaIndex2 == 0) prev.style.display = 'None';
+
+    for(var i=0; i<count; i++)
+        div.children[i].style.display = 'None';
+
+    div.children[mediaIndex2].style.display = "block";
+    dotDiv.children[mediaIndex2].style.backgroundColor = 'deepskyblue';
+}
+
+
+
+
+
+
 
 $(document).ready(function() {
   $('.edit-profile-form').on('input change', function() {
@@ -398,15 +424,11 @@ var mediaIndex = 0;
 
 function slideMedia(x, photos, videos, add){
 
-    console.log("asdfasdf:   ", photos)
     var div = x.parentElement;
-    console.log("div information: ", div)
     var prev = div.children[ photos.length + videos.length + 0];
     var next = div.children[photos.length + videos.length + 1];
     var dotDiv = div.children[photos.length + videos.length + 2];
     var count = photos.length + videos.length;
-
-    console.log(count, " afasdfasdfasdfasdfasdfasdfadsfasdf")
 
     prev.style.display = 'block';
     next.style.display = 'block';
