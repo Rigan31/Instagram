@@ -1,4 +1,3 @@
-
 {% extends 'base.html'%}
 {% load static%}
 {% block content %}
@@ -121,9 +120,7 @@
 
     </div>
 
-    <div id="myModal" class="modal">
-        
-    </div>
+    <div id="myModal" class="modal"></div>
 
     <div class="optional">
         <div class="profile clearfix">
@@ -140,39 +137,29 @@
                 <div class="see-all"><a href="#">See all</a></div>
             </div>
             <div class="body">
-                <div class="person clearfix">
-                    <div class="photo-box">
-                        <img src="Wallpaper.jpg" class="photo">
+                {% for s in suggestions %}
+                    <div class="person clearfix">
+                        <div class="photo-box">
+                            <img src="{{ s.sugges_photo }}" class="photo">
+                        </div>
+                        <div class="name">
+                            <a href="{% url 'profile' s.sugges_id %}">{{ s.sugges_name}}</a>
+                        </div>
+                        <div class="follow">
+                            {%csrf_token%}
+                            {% if user_id != following.id %}
+                                {% if s.isFollowee %}
+                                    <button onClick="follow_button(this, '{{ user_id}}', '{{ s.sugges_id }}', 1,1)">Unfollow</button>
+                                {% elif s.isFollower %}
+                                    <button onClick="follow_button(this, '{{ user_id}}', '{{ s.sugges_id }}', 1,1)">Follow back</button>
+                                {% else %}
+                                    <button onClick="follow_button(this, '{{ user_id}}', '{{ s.sugges_id }}', 1,1)">Follow</button>
+                                {% endif %}
+                            {% endif %} 
+                        </div>
                     </div>
-                    <div class="name">
-                        <a href="#">Name</a>
-                    </div>
-                    <div class="follow">
-                        <a href="#">Follow</a>
-                    </div>
-                </div>
-                <div class="person clearfix">
-                    <div class="photo-box">
-                        <img src="Wallpaper.jpg" class="photo">
-                    </div>
-                    <div class="name">
-                        <a href="#">Name</a>
-                    </div>
-                    <div class="follow">
-                        <a href="#">Follow</a>
-                    </div>
-                </div>
-                <div class="person clearfix">
-                    <div class="photo-box">
-                        <img src="Wallpaper.jpg" class="photo">
-                    </div>
-                    <div class="name">
-                        <a href="#">Name</a>
-                    </div>
-                    <div class="follow">
-                        <a href="#">Follow</a>
-                    </div>
-                </div>
+                {% endfor %}
+                
             </div>
         </div>
         <div class="footer">

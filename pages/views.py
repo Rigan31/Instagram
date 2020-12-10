@@ -3,6 +3,7 @@ from django.db import connection
 from django.core.files.storage import FileSystemStorage
 from django.db.models.functions.datetime import datetime
 from django.http import JsonResponse
+from collections import Counter
 
 import os
 
@@ -173,7 +174,7 @@ def getStories(user_id):
                 'storier_name': storier_name,
                 'storier_photo': storier_photo,
                 'stories_info': stories_info,
-                'mediaCount': range(1,stories_info.__len__()+1,1),
+                'mediaCount': stories_info.__len__(),
             }
             stories.append(story_row)
     
@@ -229,6 +230,54 @@ def getPosts(user_id):
     
     return posts
 
+
+
+def getSuggestions(user_id):
+    cursor = connection.cursor()
+    sql = "SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s;"
+    cursor.execute(sql, [user_id])
+
+    result = cursor.fetchall()
+
+    suggestions_list = []
+    for r in result:
+        sql = "SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s AND FOLLOWEE_ID <> %s;"
+        cursor.execute(sql, [r[0], user_id])
+        result2 = cursor.fetchall()
+        for r2 in result2:
+            suggestions_list.append(r2[0])
+    
+    suggestions = sorted(set(suggestions_list), key = lambda ele: suggestions_list.count(ele), reverse=True)
+    
+    print(suggestions)
+    sugges = []
+    i = 1
+    for s in suggestions:
+        if i > 5:
+            break
+        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql, [s])
+        result = cursor.fetchone()
+        row = {
+            'sugges_name': result[0],
+            'sugges_photo': result[1],
+            'sugges_id': s,
+            'isFollowee': isFollowee(user_id, s),
+            'isFollower': isFollower(user_id, s),
+        }
+        sugges.append(row)
+        i = i+1
+    cursor.close()
+    
+    print(sugges)
+    return sugges
+
+
+
+    
+
+
+
 def index(request):
     if 'user_id' not in request.session:
         return redirect('login')
@@ -245,6 +294,7 @@ def index(request):
         'user_id': user_id,
         'user_photo': user_info[0],
         'name': user_info[1],
+        'suggestions': getSuggestions(user_id),
     }
     
     return render(request, 'pages/index.html', context)

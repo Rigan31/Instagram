@@ -95,6 +95,54 @@ body{
     background-color: rgba(0,0,0,1); /* Black w/ opacity */
 }
 
+.media-in-story{
+    width: 70%;
+    height: 80%;
+    position: relative;
+    background-color: white;
+    margin: 20px auto;
+}
+
+.story-photo-in-story{
+    max-height: 100%;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    display: none;
+    animation-name: fade-media;
+    animation-duration: 1.5s;
+}
+
+.prev-story{
+    left: 7px;
+    display: none;
+}
+
+.button-in-story{
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: 25px;
+    height: 25px;
+    padding-left: 8px;
+    padding-top: 1px;
+    background-color: rgba(240, 248, 255, 0.5);
+    margin-top: -22px;
+    color: rgba(0,0,0,0.5);
+    font-weight: bold;
+    font-size: 17px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    border-radius: 50%;
+}
+
 .modal-content {
     margin: auto;
     display: block;

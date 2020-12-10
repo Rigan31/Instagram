@@ -169,17 +169,6 @@ function follow_button(x, user, followee, mm, reload=0){
 }
 
 function modalTheimage(stories_info, name, id, mediaCount){
-    //var c = x.parentElement.children
-    //var modal = c[1]
-    //var modalImg = modal.children[1]
-
-    //console.log()
-    //var modal = document.getElementById('myModal');
-    //var modalImg = modal.children[1];
-
-    //modal.style.display = "block";
-    //modalImg.src = story_path;
-    //c[2].style.borderColor = "white"
     console.log(stories_info)
 
 
@@ -189,21 +178,44 @@ function modalTheimage(stories_info, name, id, mediaCount){
 
     console.log(div)
     for(var i = 0; i < stories_info.length; i++){
-        var img = '<img src="'+stories_info[i].story_path+'" class="modal-content">'
+        if(i == 0)
+            var img = '<img src="'+stories_info[i].story_path+'" style="display: block !important;" class="story-photo-in-story">'
+        else
+            var img = '<img src="'+stories_info[i].story_path+'" class="story-photo-in-story">'
         div = div+img
     }
 
     console.log(div)
 
-    var a1 = '<a class="button-in-post prev" onclick="slideMedia(this, '+stories_info +', [] , -1)">&#10094;</a>'
+    var stories_photo = new Array()
+    for(var i = 0; i < stories_info.length; i++){
+
+        stories_photo.push(stories_info[i].story_path)
+    }
+
+    console.log(stories_photo)
+    var a1 = '<a class="button-in-post prev" onclick="slideMedia(this, '+stories_photo +', [] , -1)">&#10094;</a>'
     div = div+a1
-    console.log(mediaCount, "mediacount")
-    if(mediaCount.length > 1){
-        var a2 = '<a class="button-in-post prev" onclick="slideMedia(this, '+stories_info +', [] , -1)">&#10094;</a>'
+    if(mediaCount > 1){
+        var a2 = '<a class="button-in-post next" onclick="slideMedia(this, '+stories_photo+', [] , 1)">&#10095;</a>'
         div = div+a2
     
     }
-    div = div+'</div>'
+    div = div + '<div class="dot-container-on-media">'
+    for(var i = 1; i <= mediaCount; i++){
+        console.log("ia nafalsdjflkaj")
+        if(i == 1){
+            div = div + '<span class="dot-on-media" style="background-color:deepskyblue;"></span>'
+        }
+        else{
+            div = div + '<span class="dot-on-media" style="background-color:#bbb"></span>'
+        }
+    }
+    div = div + '</div>'
+
+    console.log(div)
+
+    div = div + '</div>'
     var modal = document.getElementById('myModal');
     modal.innerHTML = ""
     $(modal).append(span)
@@ -386,11 +398,15 @@ var mediaIndex = 0;
 
 function slideMedia(x, photos, videos, add){
 
+    console.log("asdfasdf:   ", photos)
     var div = x.parentElement;
+    console.log("div information: ", div)
     var prev = div.children[ photos.length + videos.length + 0];
     var next = div.children[photos.length + videos.length + 1];
     var dotDiv = div.children[photos.length + videos.length + 2];
     var count = photos.length + videos.length;
+
+    console.log(count, " afasdfasdfasdfasdfasdfasdfadsfasdf")
 
     prev.style.display = 'block';
     next.style.display = 'block';
