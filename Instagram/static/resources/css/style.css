@@ -581,6 +581,10 @@ nav{
 }
 
 .logo{
+    color: rgb(31,140,235);
+    font-weight: 900;
+    font-size: 30px;
+    letter-spacing: 2px;
     height: 40px;
     width: auto;
 }

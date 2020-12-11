@@ -10,69 +10,143 @@
 <div class="search-body">
     <div class="search-users-post">
         {% for post in search_posts %}
-            <div class="post">
-                <div class="poster clearfix">
-                    <div class="photo-box">
-                        <a href="{% url 'profile' post.poster_id %}"><img src="{{ post.poster_photo }}" alt="identity" class="photo"></a>
-                    </div>
-                    
-                    <div class="name">
-                        <a href="{% url 'profile' post.poster_id %}">{{post.poster_name}}</a>
-                    </div>
-                </div>
-
-                <div class="caption">
-                    {{post.caption}}
+        <div class="post">
+            <div class="poster clearfix">
+                <div class="photo-box">
+                    <a href="{% url 'profile' post.poster_id %}"><img src="{{ post.poster_photo }}" alt="identity" class="photo"></a>
                 </div>
                 
+                <div class="name">
+                    <a href="{% url 'profile' post.poster_id %}">{{post.poster_name}}</a>
+                </div>
+            </div>
+
+            <div class="caption">
+                {{post.caption}}
+            </div>
+
+            {% if post.mediaCount|length > 0%}
+            <div class="media">
+
                 {% for photo in post.photos %}
-                    <div class="media">
-                        <img src="{{ photo }}" class="post-photo">
-                    </div>
+                    {% if forloop.counter == 1 %}
+                        <img src="{{ photo }}" class="post-photo-in-post" style="display: block !important;" ondblclick="likes('{{post.user_id}}', '{{post.post_id}}', document.getElementsByClassName('like-for-post')[0])" />
+                    {% else %}
+                        <img src="{{ photo }}" class="post-photo-in-post" ondblclick="likes('{{post.user_id}}', '{{post.post_id}}', document.getElementsByClassName('like-for-post')[0])" />
+                    {% endif %}
                 {% endfor %}
-
+    
                 {% for video in post.videos %}
-                    <div class="media">
-                        <video src="{{ video }}" class="post-video" controls></video>
-                    </div>
+                    {% if post.photos|length == 0 and forloop.counter == 1 %}
+                        <video class="post-video-in-post" src ="{{ video }}" style="display: block !important;" controls></video>
+                    {% else %}
+                        <video class="post-video-in-post" src="{{video}}" controls></video>
+                    {% endif %}
                 {% endfor %}
-                
-                <!--div class="media">
-                    <script type="text/javascript">
-                        loadPostimage({{post.photos}})
-                    </script>
-                </div-->
-                
+    
+                <a class="button-in-post prev" onclick="slideMedia(this, {{ post.photos }}, {{ post.videos }}, -1)">&#10094;</a>
+                {% if post.mediaCount|length > 1 %}
+                <a class="button-in-post next" onclick="slideMedia(this, {{ post.photos }}, {{ post.videos }}, 1)">&#10095;</a>
+                {% endif %}
+    
+                <div class="dot-container-on-media">
+                    {% for i in post.mediaCount %}
+    
+                        {% if forloop.counter == 1  %}
+                            <span class="dot-on-media" style="background-color:deepskyblue;"></span>
+                        {% else %}
+                            <span class="dot-on-media" style="background-color:#bbb"></span>
+                        {% endif %}
+    
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="post_icons">
                 {% csrf_token %}
                 <ul class="icons clearfix">
                     {% if post.isLike %}
-                        <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        <li><i class="fa fa-heart like-for-post" aria-hidden="true" onclick="likes('{{post.user_id}}', '{{post.post_id}}', this)"></i></li>
                     {% else %}
-                        <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        <li><i class="fa fa-heart-o like-for-post" aria-hidden="true" onclick="likes('{{post.user_id}}', '{{post.post_id}}', this)"></i></li>
                     {% endif %}
-                    <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
+                    <li><a href="{% url 'post' post.post_id %}"><i class="fa fa-comment-o" aria-hidden="true"></i></a></li>
                     <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
                     {% if post.isSave %}
-                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{post.user_id}}', '{{post.post_id}}', this)"></i></li>
                     {% else %}
-                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{post.user_id}}', '{{post.post_id}}', this)"></i></li>
                     {% endif %}
-                    
                 </ul>
-                <div class="text">
-                    <p class="total_likes">{{post.total_likes}} likes</p>
-                    <p>View all 2 comments</p>
+            </div>
+
+
+
+            <!--MY change 1: showing liked user list-->
+
+            <div class="text">
+                <button class="like_list_show_button" id="like_list_show_button" onclick="like_list('{{ post.user_id }}','{{ post.post_id }}', this)" >{{ post.total_likes }} likes</button>
+            </div>
+
+
+            <!--MY change 1 end-->
+            {% if post.comment_count %}
+            <div class="text">
+                <a href="{% url 'post' post.post_id %}" target="_blank" class="index-view-all-comments" >
+                    View all &nbsp;<div>{{ post.comment_count}}</div> comments
+                </a>
+            </div>
+            {% endif %}
+            <div class="comments">
+                {% for comment in post.comments%}
+                    {% if forloop.counter == 1 or forloop.counter == 2 %}
+                    <div class="index-comment-element clearfix">
+                        <div class="index-comment-comment">
+                            <a href="{% url 'profile' comment.commenter_id%}">@{{ comment.commenter_username}}</a> {{comment.comment_text}}
+                        </div>
+                        {% csrf_token %}
+
+                        <div class="index-comment-element-like">
+                            <ul class="icons clearfix">
+                                {% if comment.comment_is_like %}
+                                    <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{ user_id }}','{{ comment.comment_id }}', this, 'CMNT')"></i></li>
+                                {% else %}
+                                    <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{ user_id }}','{{ comment.comment_id }}', this, 'CMNT')"></i></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="index-post-age">
+                {{ post.age}}
+            </div>
+
+            <div class="add-comment clearfix">
+                {% csrf_token %}
+                <input type="text" placeholder="Add your comment" onkeyup="change_color_of_post_button(this)">
+                <button type="submit" onclick="addCommentIndex(this, '{{ user_id }}', '{{ post.post_id }}')" disabled>Post</button>
+            </div>
+        </div>
+        {% endfor %}
+
+
+        <div class="like_list_container" id="like_list_container" onclick="close_list()">
+            <div class="like_list_inner_container" id="like_list_inner_container" onclick="inner_container_stop_propagation()">
+                <div class="like_list_top_bar" id="like_list_top_bar">
+                    <h2>Likes</h2>
+                    <img onclick="close_list()" src="{% static 'resources/img/close.jpg'%}" >
                 </div>
-                <ul class="comments">
-                    <li>I am from Dhaka</li>
-                    <li>Give me some sunshine</li>
-                </ul>
-                <div class="add-comment clearfix">
-                    <input type="text" placeholder="Add your comment">
-                    <a href="#">Post</a>
+                <hr />
+                <div class="like_list_content" id="like_list_content">
+                    <ul class="list_of_liked_users" id="list_of_liked_users">
+                    </ul>
                 </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
     
     <div class="search-users-body">

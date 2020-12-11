@@ -586,27 +586,7 @@ def searchPosts(user_id, value):
         visibility = r[4]
         poster_id = r[5]
 
-        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
-        cursor.execute(sql, [poster_id])
-        poster_info = cursor.fetchone()
-        poster_name = poster_info[0]
-        poster_photo = poster_info[1]
-
-        row = { 
-                'creation_time': creation_time,
-                'caption': caption,
-                'update_time': update_time,
-                'poster_name': poster_name,
-                'poster_photo': poster_photo,
-                'photos': collectphotos(post_id),
-                'post_id': post_id,
-                'poster_id': poster_id,
-                'total_likes': totalLikes(post_id),
-                'isLike': isLike(user_id, post_id),
-                'isSave': isSave(user_id, post_id),
-                'videos': collectVideos(post_id),
-            }
-        search_posts.append(row)
+        search_posts.append(getPost(poster_id, post_id))
     
     return search_posts
 
