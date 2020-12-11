@@ -34,18 +34,45 @@
                         <a href="{% url 'profile' post.poster_id %}">{{post.poster_name}}</a>
                     </div>
                 </div>
-                
-                {% for photo in post.photos %}
-                    <div class="media">
-                        <img src="{{ photo }}" class="post-photo">
-                    </div>
-                {% endfor %}
 
-                {% for video in post.videos %}
-                    <div class="media">
-                        <video src="{{ video }}" class="post-video" controls></video>
+                {% if post.mediaCount|length > 0%}
+                <div class="media">
+
+                    {% for photo in post.photos %}
+                        {% if forloop.counter == 1 %}
+                            <img src="{{ photo }}" class="post-photo-in-post" style="display: block !important;" ondblclick="likes('{{post.user_id}}', '{{post.post_id}}', document.getElementsByClassName('like-for-post')[0])" />
+                        {% else %}
+                            <img src="{{ photo }}" class="post-photo-in-post" ondblclick="likes('{{post.user_id}}', '{{post.post_id}}', document.getElementsByClassName('like-for-post')[0])" />
+                        {% endif %}
+                    {% endfor %}
+        
+                    {% for video in post.videos %}
+                        {% if post.photos|length == 0 and forloop.counter == 1 %}
+                            <video class="post-video-in-post" src ="{{ video }}" style="display: block !important;" controls></video>
+                        {% else %}
+                            <video class="post-video-in-post" src="{{video}}" controls></video>
+                        {% endif %}
+                    {% endfor %}
+        
+                    <a class="button-in-post prev" onclick="slideMedia(this, {{ post.photos }}, {{ post.videos }}, -1)">&#10094;</a>
+                    {% if post.mediaCount|length > 1 %}
+                    <a class="button-in-post next" onclick="slideMedia(this, {{ post.photos }}, {{ post.videos }}, 1)">&#10095;</a>
+                    {% endif %}
+        
+                    <div class="dot-container-on-media">
+                        {% for i in post.mediaCount %}
+        
+                            {% if forloop.counter == 1  %}
+                                <span class="dot-on-media" style="background-color:deepskyblue;"></span>
+                            {% else %}
+                                <span class="dot-on-media" style="background-color:#bbb"></span>
+                            {% endif %}
+        
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                </div>
+                {% endif %}
+
                 
                 <!--div class="media">
                     <script type="text/javascript">
@@ -56,17 +83,17 @@
                 <div class="post_icons">
                     {% csrf_token %}
                     <ul class="icons clearfix">
-                        {% if post.isLike %}
-                            <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        {% if isLike %}
+                            <li><i class="fa fa-heart like-for-post" aria-hidden="true" onclick="likes('{{user_id}}', '{{post_id}}', this)"></i></li>
                         {% else %}
-                            <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                            <li><i class="fa fa-heart-o like-for-post" aria-hidden="true" onclick="likes('{{user_id}}', '{{post_id}}', this)"></i></li>
                         {% endif %}
-                        <li><i class="fa fa-comment-o" aria-hidden="true"></i></li>
+                        <li><i class="fa fa-comment-o" aria-hidden="true" onclick="commentButtonClick(document.getElementsByClassName('add-comment-in-post')[0], '')"></i></li>
                         <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
-                        {% if post.isSave %}
-                            <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                        {% if isSave %}
+                            <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post_id}}', this)"></i></li>
                         {% else %}
-                            <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post.post_id}}', this)"></i></li>
+                            <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post_id}}', this)"></i></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -77,7 +104,6 @@
 
                 <div class="text">
                     <button class="like_list_show_button" id="like_list_show_button" onclick="like_list('{{ user_id }}','{{ post.post_id }}', this)" >{{ post.total_likes }} likes</button>
-                    <p>View all 2 comments</p>
                 </div>
 
                 <div class="caption">
@@ -127,14 +153,15 @@
             <div class="photo-box">
                 <img src="{{ user_photo }}" alt="fa" class="photo">
             </div>
-            <div class="name">
+            <div class="name secname">
                 <a href="{% url 'profile' user_id %}">{{ name }}</a>
+                <div class="">{{ username }}</div>
             </div>
         </div>
         <div class="suggestions">
             <div class="header clearfix">
                 <div class="suggested">Suggested For You</div>
-                <div class="see-all"><a href="#">See all</a></div>
+                <div class="see-all"><a href="{% url 'suggestions' %}">See all</a></div>
             </div>
             <div class="body">
                 {% for s in suggestions %}
@@ -147,13 +174,11 @@
                         </div>
                         <div class="follow">
                             {%csrf_token%}
-                            {% if user_id != following.id %}
-                                {% if s.isFollowee %}
-                                    <button onClick="follow_button(this, '{{ user_id}}', '{{ s.sugges_id }}', 1,1)">Unfollow</button>
-                                {% elif s.isFollower %}
-                                    <button onClick="follow_button(this, '{{ user_id}}', '{{ s.sugges_id }}', 1,1)">Follow back</button>
+                            {% if user_id != s.sugges_id %}
+                                {% if s.isFollower %}
+                                    <button onClick="follow(this, '{{ user_id}}', '{{ s.sugges_id }}', 1)">Follow back</button>
                                 {% else %}
-                                    <button onClick="follow_button(this, '{{ user_id}}', '{{ s.sugges_id }}', 1,1)">Follow</button>
+                                    <button onClick="follow(this, '{{ user_id}}', '{{ s.sugges_id }}', 1)">Follow</button>
                                 {% endif %}
                             {% endif %} 
                         </div>

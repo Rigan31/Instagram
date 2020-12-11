@@ -5,6 +5,24 @@
 {% include 'navbar.html' %}
 {% include 'user/base_user.html' %}
 
+
+    {% if user_id == base.observee_id %}
+
+        <div class="profile-nav">
+          <ul>
+            <li><a href="{% url 'profile' base.observee_id%}">Posts</a></li>
+            {% if base.observee_id == user_id %}
+              <li><a href="{% url 'following' base.observee_id%}">Following</a></li>
+              <li><a href="{% url 'follower' base.observee_id%}"  class="activated-link">Follower</a></li>
+              <li><a href="{% url 'archive' base.observee_id%}">Archive</a></li>
+              <li><a href="{% url 'edit-profile' %}">Edit profile</a></li>
+            {% endif %}
+
+          </ul>
+        </div>
+
+    {% endif %}
+
 <div class="search-users-body">
     {% for follower in user_follower %}
         <div class="search_users">

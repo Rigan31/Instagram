@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.db import connection
 from django.http import HttpResponse
 from django.http import JsonResponse
+from pages import views
+import datetime
 
 # Create your views here.
 
@@ -63,6 +65,26 @@ def collectVideos(post_id):
     return videos
 
 
+
+def getPost(user_id, post_id):
+
+    photos = collectphotos(post_id)
+    videos = collectVideos(post_id)
+
+    if len(photos)>0: photos = photos[0]
+    else: photos = ""
+    if len(videos)>0: videos = videos[0]
+    else: videos = ""
+
+    data = {
+        'user_id': user_id,
+        'post_id': post_id,
+        'photo': photos,
+        'video': videos,
+        'total_likes': views.totalLikes(post_id),
+        'comment_count': views.getCommentCount(post_id, user_id),
+    }
+    return data
 
 
 def base_profile(request, user_id, observer_id):
@@ -133,44 +155,15 @@ def base_profile(request, user_id, observer_id):
 def getUserPosts(user_id):
     cursor = connection.cursor()
 
-    sql = "SELECT * FROM POSTS WHERE USER_ID = %s ORDER BY CREATION_DATE DESC;"
+    sql = "SELECT ID FROM POSTS WHERE USER_ID = %s ORDER BY CREATION_DATE DESC;"
     cursor.execute(sql, [user_id])
-    result = cursor.fetchall()
+    rr = cursor.fetchall()
 
     posts = []
+    for r in rr:
+        posts.append(getPost(user_id, r[0]))
 
-    for r in result:
-        post_id = r[0]
-        creation_time = r[1]
-        caption = r[2]
-        update_time = r[3]
-        visibility = r[4]
-        poster_id = r[5]
-
-        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
-        cursor.execute(sql, [poster_id])
-        poster_info = cursor.fetchone()
-        poster_name = poster_info[0]
-        poster_photo = poster_info[1]
-
-        row = { 
-                'creation_time': creation_time,
-                'caption': caption,
-                'update_time': update_time,
-                'poster_name': poster_name,
-                'poster_photo': poster_photo,
-                'photos': collectphotos(post_id),
-                'post_id': post_id,
-                'poster_id': poster_id,
-                'total_likes': totalLikes(post_id),
-                'isLike': isLike(user_id, post_id),
-                'isSave': isSave(user_id, post_id),
-                'videos': collectVideos(post_id),
-            }
-        posts.append(row)
-    
     return posts
-
 
 def profile(request, user_id):
     observer_id = request.session['user_id']
@@ -180,6 +173,31 @@ def profile(request, user_id):
         'user_id': observer_id,
     }
     return render(request, 'user/user.html', context)
+
+
+def getSavedPosts(user_id):
+    cursor = connection.cursor()
+
+    sql = "SELECT POST_ID FROM SAVED WHERE USER_ID = %s ORDER BY DATE_OF_SAVED DESC;"
+    cursor.execute(sql, [user_id])
+    rr = cursor.fetchall()
+
+    posts = []
+    for r in rr:
+        posts.append(getPost(user_id, r[0]))
+
+    return posts
+
+
+def archive(request, user_id):
+    observer_id = request.session['user_id']
+    context = {
+        'base': base_profile(request, user_id, observer_id),
+        'user_posts': getSavedPosts(user_id),
+        'user_id': observer_id,
+    }
+    return render(request, 'user/archive.html', context)
+
 
 def isFollowee(user_id, searchee_id):
     cursor = connection.cursor()

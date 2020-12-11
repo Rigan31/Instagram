@@ -214,6 +214,7 @@ function modalTheimage(stories_info, name, id, mediaCount){
 
 function closeThemodal(x) { 
     x.parentElement.style.display = "none";
+    mediaIndex2 = 0;
 }
 
 var mediaIndex2 = 0
@@ -367,9 +368,10 @@ function showNotification(x){
                 var date = response.notifications[i].date
 
                 var img = '<img src="'+photo+'" class="">'
-                var imgDiv = '<div class="show-all-notification-photo"> '+img+' </div>'
+                var imgInnerDiv = '<div class="show-all-notification-photo">'+img+'</div>'
+                var imgDiv = '<div class="show-all-notification-photo-round"> '+imgInnerDiv+' </div>'
 
-                var msgDiv = '<div class="show-all-notification-msg">'+msg+'</div>'
+                var msgDiv = '<div class="show-all-notification-msg"><text>'+msg+'</text></div>'
                 var dateDiv = '<div class="show-all-notification-date">'+date+'</div'
                 var msgDateDiv = '<div class="show-all-notification-msg-date">'+msgDiv+dateDiv+'</div>'
                 var finalDiv = '<div class="show-all-notification-element clearfix">'+imgDiv+msgDateDiv+'</div>'
@@ -717,3 +719,18 @@ function changeCaption(x, post_id) {
 
 
 }
+
+
+
+
+
+
+//##############################################################
+
+function showHoverArea(x, show){
+    var div = x.children[0]
+
+    if(show) div.style.display = "block"
+    else div.style.display = "none"
+}
+

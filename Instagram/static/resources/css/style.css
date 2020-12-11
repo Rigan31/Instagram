@@ -170,7 +170,7 @@ body{
 
 .post-and-story{
     position: absolute;
-    left: 30%;
+    left: 25%;
     width: 40%;
     top: 80px;
     min-width: 400px;
@@ -208,6 +208,8 @@ body{
     border-radius: 50%;
     margin-left: 12%;
     margin-top: 12%;
+    object-fit: cover;
+    border: 0.3px solid rgb(218, 218, 218);
 
 }
 .name{
@@ -216,6 +218,18 @@ body{
     margin-left: 5px;
     font-size: 14px;
     font-weight: bold;
+}
+
+.secname{
+    margin-top: 18px;
+}
+
+.name a{
+    color: black;
+}
+.name div{
+    color: rgb(161,161,161);
+    font-size: 12px;
 }
 
 .name a:hover{
@@ -228,7 +242,8 @@ body{
 
 .media{
     width: 100%;
-    height: auto;
+    height: 300px;
+    position: relative;
 }
 
 .post-photo{
@@ -295,11 +310,12 @@ body{
 
 
 .profile{
-    margin-left: 15px;
+    margin-left: 50px;
+    margin-top: 50px;
 }
 .suggestions{
     margin-top: 20px;
-    margin-left: 15px;
+    margin-left: 50px;
 }
 
 .header{
@@ -308,15 +324,31 @@ body{
 
 .suggested{
     float: left;
+    color: rgb(150,150,150);
+    font-weight: bold;
 }
 .see-all{
     float: right;
+    
+}
+.see-all a{
+    font-weight: bold;
+    color: black;
+    text-decoration: none;
 }
 .follow{
     float: right;
-    margin-top: 20px;
+    margin-top: 24px;
 }
 
+.follow button{
+    border: none;
+    font-size: 14px;
+    color: rgb(64,174,246);
+    font-weight: bold;
+    background-color: rgb(250,250,250);
+    cursor: pointer;
+}
 .dropdown{
     overflow: hidden;
 }
@@ -497,8 +529,8 @@ body{
 
 .optional{
     position: fixed;
-    left: calc(70% + 10px);
-    width: 270px;
+    left: calc(65% + 10px);
+    width: 350px;
     top: 75px;
     z-index: 2;
 }
@@ -628,24 +660,38 @@ nav{
 .show-all-notification{
     position: absolute;
     background-color: #f9f9f9;
+    height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     margin-top: 20px;
     border:1px solid rgb(225,226,229);
     text-align: left;
+    display: none;
 }
 
 .show-all-notification-element{
     padding: 5px;
     width: 250px;
 }
+.show-all-notification-element:hover{
+    background-color: rgb(225,226,229);
+}
+
+.show-all-notification-photo-round{
+    float: left;
+    margin-top: 10px;
+    margin-right: 5px;
+    width: 50px;
+    height: 70px;
+}
 
 .show-all-notification-photo{
     width: 50px;
     height: 50px;
-    float: left;
-    margin-right: 5px;
+    
 }
 
 .show-all-notification-photo img{
@@ -653,20 +699,23 @@ nav{
     height: 100%;
     object-fit: cover;
     border-radius: 15px;
-    border: 0.5px solid rgb(225,226,229);
+    border: 0.3px solid rgb(225,226,229);
 }
 
 .show-all-notification-msg-date{
     float: left;
     margin-top: 10px;
+    height: 70px;
+    width: 185px;
 }
 
 .show-all-notificatio-msg{
-    white-space: pre-wrap;
+    
 }
 
 .show-all-notification-date{
-
+    color: rgb(31,140,235);
+    font-size: 12px;
 }
 
 

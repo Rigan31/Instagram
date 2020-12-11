@@ -1,0 +1,50 @@
+{% extends 'base.html'%}
+{% load static%}
+{% block content %}
+
+<!--Navbar-->
+{% include 'navbar.html'%}
+
+<!--Body-->
+
+<div class="search-body">
+    <div class="search-users-body">
+        {% for s in suggestions %}
+            <div class="search_users">
+                    <div class="searchee_info clearfix">
+                        <div class="searchee_photo">
+                            <a href="{% url 'profile' s.sugges_id %}"><img src="{{ s.sugges_photo }}" alt="identity"></a>
+                        </div>
+                        <div class="searchee_name">
+                            <a href="{% url 'profile'  s.sugges_id%}">{{ s.sugges_name }}</a>
+                            <hr />
+                            <span>
+                                <p>{{ s.sugges_username }}</p>
+                                <a>Follower {{ s.sugges_follower }}</a>
+                                <a>Following {{ s.sugges_followee }}</a>
+    
+                                <br />
+                                <div class="profile-another-link">
+                                      <a href="{{ s.sugges_fb }}"><i class="fa fa-facebook"></i></a>
+                                      <a href="{{ s.sugges_tw }}"><i class="fa fa-twitter"></i></a>
+                                </div>
+                            </span>
+                        </div>
+                        <div class="searchee_follow">
+                            {%csrf_token%}
+                            {% if user_id != user.searchee_id %}
+                                {% if user.isFollower %}
+                                    <button onClick="follow(this, '{{ user_id}}', '{{ s.sugges_id }}', 1)">Follow back</button>
+                                {% else %}
+                                    <button onClick="follow(this, '{{ user_id}}', '{{ s.sugges_id }}', 1)">Follow</button>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+            </div>
+        {% endfor %}
+        </div>
+</div>
+
+
+{% endblock %}

@@ -23,9 +23,9 @@
 
             {% for video in videos %}
                 {% if photos|length == 0 and forloop.counter == 1 %}
-                    <video class="post-video-in-post" style="display: block !important;" controls></video>
+                    <video class="post-video-in-post" src ="{{ video }}" style="display: block !important;" controls></video>
                 {% else %}
-                    <video class="post-video-in-post" controls></video>
+                    <video class="post-video-in-post" src ="{{ video }}" controls></video>
                 {% endif %}
             {% endfor %}
 

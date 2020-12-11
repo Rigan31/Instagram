@@ -27,4 +27,8 @@ urlpatterns = [
 
     path('deleteContent', views.deleteContent, name='deleteContent'),
     path('changeCaption', views.changeCaption, name='changeCaption'),
+
+
+
+    path('suggestions', views.suggestions, name='suggestions'),
 ]

@@ -91,36 +91,6 @@ def collectVideos(post_id):
         videos.append(video_path[0])
     return videos
 
-def getStories1(user_id):
-    cursor = connection.cursor()
-    sql = "SELECT * FROM STORY WHERE (USER_ID = %s OR USER_ID = ANY(SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s)) AND TRUNC(SYSDATE-DATE_OF_STORY) < 1 ORDER BY DATE_OF_STORY DESC;"
-    cursor.execute(sql, [user_id, user_id])
-    all_stories = cursor.fetchall()
-
-    stories = []
-
-    for story in all_stories:
-        story_id = story[0]
-        story_path = story[1]
-        creation_time = story[2]
-        storier_id = story[3]
-
-        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
-        cursor.execute(sql, [storier_id])
-        storier_info = cursor.fetchone()
-        storier_name = storier_info[0]
-        storier_photo = storier_info[1]
-
-        row = {
-            'story_path': story_path,
-            'creatoin_time': creation_time,
-            'storier_id': storier_id,
-            'storier_name': storier_name,
-            'storier_photo': storier_photo,
-        }
-        stories.append(row)
-
-    return stories
 
 ##### new stories code
 
@@ -189,7 +159,7 @@ def getStories(user_id):
 
 
 
-def getPosts(user_id):
+def getPosts1(user_id):
     cursor = connection.cursor()
 
     sql = "SELECT * FROM POSTS WHERE USER_ID = %s OR USER_ID = ANY (SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s) ORDER BY CREATION_DATE DESC;"
@@ -231,6 +201,28 @@ def getPosts(user_id):
     return posts
 
 
+def getPosts(user_id):
+    user_list = []
+    user_list.append(user_id)
+
+    cursor = connection.cursor()
+    sql = "SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s;"
+    cursor.execute(sql, [user_id])
+    result = cursor.fetchall()
+
+    for r in result:
+        user_list.append(r[0])
+    
+    posts = []
+    for user in user_list:
+        sql = "SELECT ID FROM POSTS WHERE USER_ID = %s;"
+        cursor.execute(sql, [user])
+        result = cursor.fetchall()
+        for r in result:
+            posts.append(getPost(user, r[0]))
+    
+    return posts
+
 
 def getSuggestions(user_id):
     cursor = connection.cursor()
@@ -245,36 +237,46 @@ def getSuggestions(user_id):
         cursor.execute(sql, [r[0], user_id])
         result2 = cursor.fetchall()
         for r2 in result2:
+            if isFollowee(user_id, r2[0]):
+                continue
             suggestions_list.append(r2[0])
     
     suggestions = sorted(set(suggestions_list), key = lambda ele: suggestions_list.count(ele), reverse=True)
     
     print(suggestions)
     sugges = []
-    i = 1
+
     for s in suggestions:
-        if i > 5:
-            break
-        sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+        sql = "SELECT NAME, PROFILE_PIC, USERNAME, FACEBOOK_LINK, TWITTER_LINK FROM USERDATA WHERE ID = %s;"
         cursor.execute(sql, [s])
         result = cursor.fetchone()
         row = {
             'sugges_name': result[0],
             'sugges_photo': result[1],
+            'sugges_username': result[2],
+            'sugges_fb': result[3],
+            'sugges_tw': result[4],
             'sugges_id': s,
-            'isFollowee': isFollowee(user_id, s),
+            'sugges_follower': follower_count(s),
+            'sugges_followee': followee_count(s),
             'isFollower': isFollower(user_id, s),
         }
         sugges.append(row)
-        i = i+1
     cursor.close()
     
     print(sugges)
     return sugges
 
 
-
+######################## new code for suggestions page
     
+def suggestions(request):
+    user_id = request.session['user_id']
+    context = {
+        'suggestions': getSuggestions(user_id),
+        'user_id': user_id,
+    }
+    return render(request, 'pages/suggestions.html', context)
 
 
 
@@ -283,10 +285,15 @@ def index(request):
         return redirect('login')
     user_id = request.session['user_id']
     cursor = connection.cursor()
-    sql = "SELECT PROFILE_PIC, NAME FROM USERDATA WHERE ID =%s;"
+    sql = "SELECT PROFILE_PIC, NAME, USERNAME FROM USERDATA WHERE ID =%s;"
     cursor.execute(sql, [user_id])
     user_info = cursor.fetchone()
     cursor.close()
+
+    suggestions = getSuggestions(user_id)
+
+    if len(suggestions) > 5:
+        suggestions = suggestions[:5]
 
     context = {
         'posts': getPosts(user_id),
@@ -294,7 +301,8 @@ def index(request):
         'user_id': user_id,
         'user_photo': user_info[0],
         'name': user_info[1],
-        'suggestions': getSuggestions(user_id),
+        'username': user_info[2],
+        'suggestions': suggestions,
     }
     
     return render(request, 'pages/index.html', context)
@@ -636,7 +644,7 @@ def notification(request):
     user_id = request.session['user_id']
     if request.is_ajax:
         cursor = connection.cursor()
-        sql = "SELECT MESSAGE, DATE_OF_MESSAGE FROM NOTIFICATION WHERE USER_ID =%s ORDER BY DATE_OF_MESSAGE DESC;"
+        sql = "SELECT MESSAGE, AGE_OF_CONTENT(DATE_OF_MESSAGE) FROM NOTIFICATION WHERE USER_ID =%s ORDER BY DATE_OF_MESSAGE DESC;"
         cursor.execute(sql, [user_id])
         result = cursor.fetchall()
 
@@ -644,6 +652,9 @@ def notification(request):
 
         for r in result:
             date = r[1]
+            sss = date.split()
+            age = timeToAge(sss)
+            
             msg = r[0].split(",")
             action_id = msg[0]
             msg = msg[1]
@@ -657,11 +668,11 @@ def notification(request):
             msg = action_name+' '+msg
             print(msg)
             row = {
-                'action-id': action_id,
+                'action_id': action_id,
                 'action_name': action_name,
                 'action_photo': action_photo,
                 'msg': msg,
-                'date': date,
+                'date': age,
             }
             notifications.append(row)
         
@@ -938,6 +949,25 @@ def getComment(post_id, logged_user_id):
     cursor.close()
     return data
 
+def getCommentCount(post_id, user_id):
+
+    cursor = connection.cursor()
+    sql = "SELECT ID FROM COMMENTS WHERE POST_ID = %s;"
+    cursor.execute(sql,[post_id])
+    rr = cursor.fetchall()
+
+    count = 0
+    for r in rr:
+        count = count + 1
+        comment_id = r[0]
+
+        sql = "SELECT COUNT(*) FROM COMMENT_REPLY WHERE COMMENT_ID = %s;"
+        cursor.execute(sql, [comment_id])
+
+        count += cursor.fetchone()[0]
+
+    return count
+
 def getPost(user_id, post_id):
 
     cursor = connection.cursor()
@@ -1009,10 +1039,12 @@ def getPost(user_id, post_id):
         'isFollower': isfollower,
         'isFollowee': isfollowee,
         'comments': getComment(post_id, user_id),
+        'comment_count': getCommentCount(post_id, user_id),
         'mediaCount': range(1,photos.__len__() + videos.__len__() + 1,1),
     }
     cursor.close()
     return data
+
 
 def post(request, post_id):
 

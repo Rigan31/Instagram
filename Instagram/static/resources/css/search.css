@@ -48,19 +48,12 @@
 
 
 .search-users-body{
-    width: 35%;
-    margin: 40px auto 20px auto;
-    padding: 20px;
+    width: 1200px;
+    margin: 0px auto 0px auto;
     background-color: white;
-    border: 1px solid rgb(180,182,184);
     border-radius: 15px;
-    min-width: 600px;
-}
-
-@media (max-width: 1000px){
-    .search-users-body{
-        margin-left: 200px;
-    }
+    background-color: ghostwhite;
+    padding: 45px 270px 45px 270px;
 }
 
 .search_users{

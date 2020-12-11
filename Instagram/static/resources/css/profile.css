@@ -1,40 +1,4 @@
 
-
-  
-  .profile-username{
-    padding: 10px;
-  }
-  .profile-count{
-    padding: 10px;
-  }
-  .profile-count ul{
-    list-style: none;
-  }
-  
-  .profile-count ul li{
-    display: inline-block;
-    margin-right: 10px;
-  }
-  
-  .profile-name{
-    padding: 10px;
-  }
-
-  
-  .profile-nav ul{
-    list-style: none;
-    width: 600px;
-    margin: 5px auto;
-    border: 1px solid black;
-    text-align: center;
-    padding: 10px;
-  }
-  
-  .profile-nav ul li{
-    display: inline-block;
-    margin-right: 20px;
-  }
-  
 .user-post{
   width: 40%;
   margin: 30px auto;
@@ -53,19 +17,12 @@
   margin: 30px auto;
 }
 
-
-/*#################################################*/
-/*REPLACE THESE FOLLOWING CLASSES*/
-
 .user-profile{
     margin: 75px auto 5px auto;
     width: 50%;
     min-width: 700px;
-    border: 1px solid red;
-}
-
-.profile-nav{
-    margin-top: 10px;
+    border-radius: 20px;
+    background-color: ghostwhite;
 }
 
 .profile-info{
@@ -88,16 +45,214 @@
     margin-top: 30px;
 }
 
-.profile-about{
-    float: left;
-    padding: 20px;
-    margin-top: 25px;
-    margin-bottom: 20px;
-}
-
 @media (max-width: 1000px){
     .user-profile{
         margin-left: 150px;
     }
 
+}
+
+
+
+
+
+
+
+
+  /* FINAL CHANGE */
+
+.profile-view{
+    display: block;
+    height: auto;
+    margin: 0px auto 5px auto;
+    width: 1200px;
+    padding: 0px 29px 30px 29px;
+    background-color: ghostwhite;
+    border-radius: 20px;
+}
+
+.image-container{
+    display: inline-block;
+    height: 347px;
+    width: 347px;
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.post-image{
+    height: 100%;
+    width: 100%;
+    border-radius: 30px;
+}
+
+.post-video{
+    height: 100%;
+    width: 100%;
+    border-radius: 30px;
+    cursor: pointer;
+    background-color: gray;
+}
+
+.image-hover{
+    display: none;
+    position: absolute;
+    height: 347px;
+    width: 347px;
+    border-radius: 30px;
+    background-color: rgba(211,211,211, 0.8);
+    cursor: pointer;
+    font-size: 45px;
+}
+
+.indicator-icon{
+    position: absolute !important;
+    fort-size: 21px;
+    font-size: 30px;
+    padding-left: 295px;
+    padding-top: 18px;
+}
+
+.image-hover p{
+    position: relative;
+    left: 25%;
+    top: 45%;
+}
+
+.kala-comment, .kala-heart{
+    position: relative;
+    color: black;
+
+}
+
+
+
+
+.profile-about{
+    float: left;
+    padding: 20px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    width: 56%;
+}
+
+.profile-username{
+    padding-left: 10px;
+    font-size: 20px;
+    font-weight: bolder;
+    height: 15px;
+}
+
+.profile-username a{
+    text-decoration: none;
+    color: black;
+}
+
+.profile-username a:hover{
+    text-decoration: underline;
+    color: #0066ff;
+}
+
+.profile-count{
+    padding-left: 12px;
+    padding-top: 5px;
+    margin-top: 8px;
+  }
+.profile-count ul{
+    list-style: none;
+  }
+
+.profile-count ul li{
+    display: inline-block;
+    margin-bottom: 6px;
+
+  }
+
+.profile-count ul li a{
+    font-size: 16px;
+    font-weight: bold;
+    color: cornflowerblue;
+}
+.profile-count ul li a:hover, .profile-count ul li a:hover{
+    text-decoration: underline;
+    color: deepskyblue;
+}
+
+.profile-name{
+    margin-left: 11px;
+    margin-top: 12px;
+    color: slategray;
+    font-size: 18px;
+  }
+
+.profile-another-link2{
+    margin-top: 18px;
+    margin-left: 12px;
+    font-size: 25px;
+}
+
+.profile-another-link2 a{
+    padding-right: 10px;
+    color: cornflowerblue;
+}
+
+.profile-another-link2 a:hover, .profile-another-link2 a:active{
+    color: deepskyblue;
+}
+
+.follow-button2{
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+}
+
+.follow-button2 form input{
+    background-color: #0095f6;
+    border-radius: 8px;
+    padding: 3px 15px 4px 15px;
+    color: white;
+    font-size: 13px;
+}
+
+.profile-nav{
+    display: block;
+    height: auto;
+    margin: 20px auto 0px auto;
+    width: 1200px;
+    background-color: ghostwhite;
+    border-radius: 20px;
+    padding: 7px 0px 7px 0px;
+}
+
+.profile-nav ul{
+    list-style: none;
+    width: 600px;
+    margin: 15px auto 0px auto;
+    text-align: center;
+  }
+
+.profile-nav ul li{
+    display: inline-block;
+    margin-right: 6px;
+  }
+.profile-nav ul li a{
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: lightgray;
+    color: cadetblue;
+}
+
+.activated-link{
+    border-top: 2px solid gray !important;
+    background-color: darkgray !important;
+    color: currentColor !important;
+}
+
+.profile-nav ul li a:hover, .profile-nav ul li a:active{
+    border-top: 2px solid gray;
+    background-color: darkgray;
+    color: currentColor;
 }
