@@ -7,6 +7,36 @@ import datetime
 
 # Create your views here.
 
+def timeToAge(sss):
+
+    age = ""
+    for i in range(0,len(sss),2):
+        if int(sss[i]) != 0:
+            if sss[i+1] == 'Y':
+                if int(sss[i]) == 1: age = sss[i] + ' year ago'
+                else: age = sss[i] + ' years ago'
+            elif sss[i+1] == 'M':
+                if int(sss[i]) == 1: age = sss[i] + ' month ago'
+                else: age = sss[i] + ' months ago'
+            elif sss[i+1] == 'D':
+                if int(sss[i]) == 1: age = sss[i] + ' day ago'
+                else: age = sss[i] + ' days ago'
+            elif sss[i+1] == 'h':
+               if int(sss[i]) == 1: age = sss[i] + ' hour ago'
+               else: age = sss[i] + ' hours ago'
+            elif sss[i+1] == 'm':
+                 if int(sss[i]) == 1: age = sss[i] + ' minute ago'
+                 else: age = sss[i] + ' minutes ago'
+            elif sss[i+1] == 's':
+                if int(sss[i]) == 1: age = sss[i] + ' second ago'
+                else: age = sss[i] + ' seconds ago'
+            break
+
+    if age == "": age = '0 second ago'
+    return age
+
+
+
 def isLike(user_id, post_id):
     cursor = connection.cursor()
     sql = "SELECT COUNT(*) FROM LIKES WHERE USER_ID = %s AND CONTENT_ID = %s AND CONTENT_TYPE = 'PST';"
@@ -132,6 +162,22 @@ def base_profile(request, user_id, observer_id):
     follower = cursor.fetchone()
     follower = follower[0]
     
+
+    sql = "SELECT LOCATION, AGE_OF_CONTENT(DATE_OF_STORY) FROM STORY WHERE USER_ID = %s ORDER BY DATE_OF_STORY DESC;"
+    cursor.execute(sql, [user_id])
+    result = cursor.fetchall()
+
+    stories_info = []
+    for r in result:
+        sss = r[1].split()
+        age = timeToAge(sss)
+        row = {
+            'story_path': r[0],
+            'creation_time': age,
+        }
+        stories_info.append(row)
+    
+    
     cursor.close()
 
     
@@ -147,7 +193,8 @@ def base_profile(request, user_id, observer_id):
         'following': following,
         'follower': follower,
         'observee_id': user_id,
-        'msg': msg
+        'msg': msg,
+        'stories_info': stories_info,
     }
 
     return context

@@ -35,6 +35,10 @@
                     </div>
                 </div>
 
+                <div class="caption">
+                    {{post.caption}}
+                </div>
+
                 {% if post.mediaCount|length > 0%}
                 <div class="media">
 
@@ -73,27 +77,20 @@
                 </div>
                 {% endif %}
 
-                
-                <!--div class="media">
-                    <script type="text/javascript">
-                        loadPostimage({{post.photos}})
-                    </script>
-                </div-->
-
                 <div class="post_icons">
                     {% csrf_token %}
                     <ul class="icons clearfix">
-                        {% if isLike %}
-                            <li><i class="fa fa-heart like-for-post" aria-hidden="true" onclick="likes('{{user_id}}', '{{post_id}}', this)"></i></li>
+                        {% if post.isLike %}
+                            <li><i class="fa fa-heart like-for-post" aria-hidden="true" onclick="likes('{{post.user_id}}', '{{post.post_id}}', this)"></i></li>
                         {% else %}
-                            <li><i class="fa fa-heart-o like-for-post" aria-hidden="true" onclick="likes('{{user_id}}', '{{post_id}}', this)"></i></li>
+                            <li><i class="fa fa-heart-o like-for-post" aria-hidden="true" onclick="likes('{{post.user_id}}', '{{post.post_id}}', this)"></i></li>
                         {% endif %}
-                        <li><i class="fa fa-comment-o" aria-hidden="true" onclick="commentButtonClick(document.getElementsByClassName('add-comment-in-post')[0], '')"></i></li>
+                        <li><a href="{% url 'post' post.post_id %}"><i class="fa fa-comment-o" aria-hidden="true"></i></a></li>
                         <li><i class="fa fa-paper-plane-o" aria-hidden="true"></i></li>
-                        {% if isSave %}
-                            <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{post_id}}', this)"></i></li>
+                        {% if post.isSave %}
+                            <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{post.user_id}}', '{{post.post_id}}', this)"></i></li>
                         {% else %}
-                            <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{post_id}}', this)"></i></li>
+                            <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{post.user_id}}', '{{post.post_id}}', this)"></i></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -103,26 +100,49 @@
                 <!--MY change 1: showing liked user list-->
 
                 <div class="text">
-                    <button class="like_list_show_button" id="like_list_show_button" onclick="like_list('{{ user_id }}','{{ post.post_id }}', this)" >{{ post.total_likes }} likes</button>
+                    <button class="like_list_show_button" id="like_list_show_button" onclick="like_list('{{ post.user_id }}','{{ post.post_id }}', this)" >{{ post.total_likes }} likes</button>
                 </div>
 
-                <div class="caption">
-                    {{post.caption}}
-                </div>
 
                 <!--MY change 1 end-->
-                <a href="{% url 'post' post.post_id %}" target="_blank" >View all comments</a>
-                <ul class="comments">
-                    <li>I am from Dhaka</li>
-                    <li>Give me some sunshine</li>
-                </ul>
+                {% if post.comment_count %}
+                <div class="text">
+                    <a href="{% url 'post' post.post_id %}" target="_blank" class="index-view-all-comments" >
+                        View all &nbsp;<div>{{ post.comment_count}}</div> comments
+                    </a>
+                </div>
+                {% endif %}
+                <div class="comments">
+                    {% for comment in post.comments%}
+                        {% if forloop.counter == 1 or forloop.counter == 2 %}
+                        <div class="index-comment-element clearfix">
+                            <div class="index-comment-comment">
+                                <a href="{% url 'profile' comment.commenter_id%}">@{{ comment.commenter_username}}</a> {{comment.comment_text}}
+                            </div>
+                            {% csrf_token %}
 
+                            <div class="index-comment-element-like">
+                                <ul class="icons clearfix">
+                                    {% if comment.comment_is_like %}
+                                        <li><i class="fa fa-heart" aria-hidden="true" onclick="likes('{{ user_id }}','{{ comment.comment_id }}', this, 'CMNT')"></i></li>
+                                    {% else %}
+                                        <li><i class="fa fa-heart-o" aria-hidden="true" onclick="likes('{{ user_id }}','{{ comment.comment_id }}', this, 'CMNT')"></i></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
 
-                <hr />
+                <div class="index-post-age">
+                    {{ post.age}}
+                </div>
 
                 <div class="add-comment clearfix">
-                    <input type="text" placeholder="Add your comment">
-                    <a href="#">Post</a>
+                    {% csrf_token %}
+                    <input type="text" placeholder="Add your comment" onkeyup="change_color_of_post_button(this)">
+                    <button type="submit" onclick="addCommentIndex(this, '{{ user_id }}', '{{ post.post_id }}')" disabled>Post</button>
                 </div>
             </div>
         {% endfor %}

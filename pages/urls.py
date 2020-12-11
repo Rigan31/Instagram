@@ -31,4 +31,10 @@ urlpatterns = [
 
 
     path('suggestions', views.suggestions, name='suggestions'),
+    path('addCommentIndex', views.addCommentIndex, name='addCommentIndex'),
+
+
+
+    path('sharePost', views.sharePost, name='sharePost'),
+    path('share/<int:shared_id>', views.sharedPost, name='sharedPost')
 ]

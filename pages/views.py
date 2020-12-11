@@ -106,9 +106,11 @@ def getEachUserStories(storier_id):
 
     stories_info = []
     for story in result:
+        sss = story[1].split()
+        age = timeToAge(sss)
         row = {
             'story_path': story[0],
-            'creation_time': story[1],
+            'creation_time': age,
         }
         stories_info.append(row)
     
@@ -221,6 +223,8 @@ def getPosts(user_id):
         for r in result:
             posts.append(getPost(user, r[0]))
     
+
+    posts = sorted(posts, key=lambda k: k['creation_time'], reverse=True) 
     return posts
 
 
@@ -408,9 +412,10 @@ def saved(request):
         user_id = request.POST['user_id']
         post_id = request.POST['post_id']
 
-        print(user_id, post_id)
         cursor = connection.cursor()
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        p = isSave(user_id, post_id)
 
         if isSave(user_id, post_id):
             sql = "DELETE FROM SAVED WHERE USER_ID = %s AND POST_ID = %s;"
@@ -421,6 +426,8 @@ def saved(request):
         
         cursor.close()
         return JsonResponse({})
+
+
 
 def isFollowee(user_id, searchee_id):
     cursor = connection.cursor()
@@ -907,11 +914,11 @@ def getReply(comment_id, logged_user_id):
     cursor.close()
     return data
 
-def getComment(post_id, logged_user_id):
+def getComment(post_id, logged_user_id, content_type = 'PST'):
 
     cursor = connection.cursor()
-    sql = "SELECT ID, TEXT, AGE_OF_CONTENT(DATE_OF_COMMENT), POST_ID, USER_ID, CONTENT_TYPE FROM COMMENTS WHERE POST_ID = %s AND CONTENT_TYPE = 'PST' ORDER BY DATE_OF_COMMENT;"
-    cursor.execute(sql,[post_id])
+    sql = "SELECT ID, TEXT, AGE_OF_CONTENT(DATE_OF_COMMENT), POST_ID, USER_ID, CONTENT_TYPE FROM COMMENTS WHERE POST_ID = %s AND CONTENT_TYPE = %s ORDER BY DATE_OF_COMMENT;"
+    cursor.execute(sql,[post_id, content_type])
     r = cursor.fetchall()
 
     data = []
@@ -949,11 +956,12 @@ def getComment(post_id, logged_user_id):
     cursor.close()
     return data
 
-def getCommentCount(post_id, user_id):
+
+def getCommentCount(post_id, user_id, content_type = 'PST'):
 
     cursor = connection.cursor()
-    sql = "SELECT ID FROM COMMENTS WHERE POST_ID = %s;"
-    cursor.execute(sql,[post_id])
+    sql = "SELECT ID FROM COMMENTS WHERE POST_ID = %s AND CONTENT_TYPE = %s;"
+    cursor.execute(sql,[post_id, content_type])
     rr = cursor.fetchall()
 
     count = 0
@@ -968,7 +976,8 @@ def getCommentCount(post_id, user_id):
 
     return count
 
-def getPost(user_id, post_id):
+
+def getPost(user_id, post_id, content_type='PST', sharer_id=0, shared_id=0):
 
     cursor = connection.cursor()
     sql = "SELECT USERNAME FROM USERDATA WHERE ID = %s;"
@@ -1000,9 +1009,6 @@ def getPost(user_id, post_id):
     age = 0
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    isfollower = isFollowee(user_id, poster_id)
-    isfollowee = isFollowee(user_id, poster_id)
-
     sql = "SELECT AGE_OF_CONTENT(CREATION_DATE) FROM POSTS WHERE ID=%s;"
     cursor.execute(sql,[post_id])
     sss = cursor.fetchone()[0].split()
@@ -1016,6 +1022,23 @@ def getPost(user_id, post_id):
 
     if str(visibility) == "None":
         visibility = True
+
+    if content_type == 'PST':
+        isfollower = isFollower(user_id, poster_id)
+        isfollowee = isFollowee(user_id, poster_id)
+        total_likes = totalLikes(post_id)
+        is_like = isLike(user_id, post_id)
+        is_save = isSave(user_id, post_id)
+        comments = getComment(post_id, user_id)
+        comment_count = getCommentCount(post_id, user_id)
+    else:
+        isfollower = isFollower(user_id, sharer_id)
+        isfollowee = isFollowee(user_id, sharer_id)
+        total_likes = totalLikes(shared_id, 'SHR')
+        is_like = isLike(user_id, shared_id, 'SHR')
+        is_save = isSave(user_id, post_id)
+        comments = getComment(shared_id, user_id, 'SHR')
+        comment_count = getCommentCount(shared_id, user_id, 'SHR')
 
     data = {
         'user_id': user_id,
@@ -1032,14 +1055,14 @@ def getPost(user_id, post_id):
         'poster_name': poster_name,
         'poster_photo': poster_photo,
         'poster_username': poster_username,
-        'total_likes': totalLikes(post_id),
-        'isLike': isLike(user_id, post_id),
-        'isSave': isSave(user_id, post_id),
+        'total_likes': total_likes,
+        'isLike': is_like,
+        'isSave': is_save,
         'age': age,
         'isFollower': isfollower,
         'isFollowee': isfollowee,
-        'comments': getComment(post_id, user_id),
-        'comment_count': getCommentCount(post_id, user_id),
+        'comments': comments,
+        'comment_count': comment_count,
         'mediaCount': range(1,photos.__len__() + videos.__len__() + 1,1),
     }
     cursor.close()
@@ -1060,14 +1083,18 @@ def addComment(request):
         commenter = request.POST['commenter']
         post_id = request.POST['post_id']
         comment = request.POST['comment']
+        content_type = request.POST['content_type']
         creation_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        print(commenter, post_id, comment, content_type, creation_time)
+
         cursor = connection.cursor()
-        sql = "INSERT INTO COMMENTS(TEXT, DATE_OF_COMMENT, POST_ID, USER_ID, CONTENT_TYPE) VALUES(%s, %s, %s, %s, 'PST');"
-        cursor.execute(sql,[comment, creation_time, post_id, commenter])
+        sql = "INSERT INTO COMMENTS(TEXT, DATE_OF_COMMENT, POST_ID, USER_ID, CONTENT_TYPE) VALUES(%s, %s, %s, %s, %s);"
+        cursor.execute(sql, [comment, creation_time, post_id, commenter, content_type])
         cursor.close()
 
         return JsonResponse({})
+
 
 def addReply(request):
     if request.is_ajax:
@@ -1086,13 +1113,20 @@ def addReply(request):
 
 ### 10-12-2020
 ######################################################
-def editCaption(post_id, cap):
+def editCaption(post_id, cap, post_type = 'PST'):
 
     cursor = connection.cursor()
-    sql = 'UPDATE POSTS SET CAPTION = %s WHERE ID = %s;'
-    cursor.execute(sql, [cap, post_id])
+
+    if post_type == 'PST':
+        sql = 'UPDATE POSTS SET CAPTION = %s WHERE ID = %s;'
+        cursor.execute(sql, [cap, post_id])
+    elif post_type == 'SHR':
+        sql = 'UPDATE SHARE_POST SET CAPTION = %s WHERE ID = %s;'
+        cursor.execute(sql, [cap, post_id])
 
     cursor.close()
+
+
 
 def deleteReply(reply_id):
 
@@ -1123,53 +1157,162 @@ def deleteComment(comment_id):
 
     cursor.close()
 
-def deletePost(post_id):
+def deletePost(post_id, content_type):
 
     cursor = connection.cursor()
-    sql = "SELECT ID FROM COMMENTS WHERE POST_ID = %s AND CONTENT_TYPE = 'PST';"
-    cursor.execute(sql, [post_id])
+    sql = "SELECT ID FROM COMMENTS WHERE POST_ID = %s AND CONTENT_TYPE = %s;"
+    cursor.execute(sql, [post_id, content_type])
     r = cursor.fetchall()
 
     for rr in r: deleteComment(rr[0])
 
-    sql = "DELETE FROM PHOTOS WHERE POST_ID = %s;"
-    cursor.execute(sql, [post_id])
+    if content_type == 'PST':
 
-    sql = "DELETE FROM VIDEOS WHERE POST_ID = %s;"
-    cursor.execute(sql, [post_id])
+        sql = "DELETE FROM PHOTOS WHERE POST_ID = %s;"
+        cursor.execute(sql, [post_id])
 
-    sql = "DELETE FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = 'PST';"
-    cursor.execute(sql, [post_id])
+        sql = "DELETE FROM VIDEOS WHERE POST_ID = %s;"
+        cursor.execute(sql, [post_id])
 
-    sql = "DELETE FROM SAVED WHERE POST_ID = %s;"
-    cursor.execute(sql, [post_id])
+        sql = "DELETE FROM SAVED WHERE POST_ID = %s;"
+        cursor.execute(sql, [post_id])
 
-    sql = "DELETE FROM POSTS WHERE ID = %s;"
-    cursor.execute(sql, [post_id])
+    sql = "DELETE FROM LIKES WHERE CONTENT_ID = %s AND CONTENT_TYPE = %s;"
+    cursor.execute(sql, [post_id, content_type])
+
+    if content_type == 'PST':
+        sql = "DELETE FROM POSTS WHERE ID = %s;"
+        cursor.execute(sql, [post_id])
+    elif content_type == 'SHR':
+        sql = "DELETE FROM SHARE_POST WHERE ID = %s;"
+        cursor.execute(sql, [post_id])
 
     cursor.close()
+
+
 
 def deleteContent(request):
     if request.is_ajax:
 
         content_id = request.POST['content_id']
         content_type = request.POST['content_type']
+        content_in_content_type = request.POST['content_in_content_type']
 
         if content_type == 'CAP':
-            editCaption(content_id, '')
+            if content_in_content_type == 'SHR': editCaption(content_id, '', content_in_content_type)
+            else: editCaption(content_id, '')
         elif content_type == 'RPL': deleteReply(content_id)
         elif content_type == 'CMNT': deleteComment(content_id)
-        elif content_type == 'PST':
-            deletePost(content_id)
+        elif content_type == 'PST' or content_type == 'SHR':
+            deletePost(content_id, content_type)
 
         return JsonResponse({})
+
+
 
 def changeCaption(request):
     if request.is_ajax:
 
         text = request.POST['text']
         post_id = request.POST['post_id']
+        post_type = request.POST['post_type']
 
-        editCaption(post_id, text)
-        addTag(text, post_id)
+        editCaption(post_id, text, post_type)
+        if post_type=='PST': addTag(text, post_id)
         return JsonResponse({})
+
+
+
+
+################ my changes in view
+def addCommentIndex(request):
+    print("kasjdfljasldfjalsfasdfjlaskdfkasssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss")
+    if request.is_ajax:
+        commenter = request.POST['commenter']
+        post_id = request.POST['post_id']
+        comment = request.POST['comment']
+        creation_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print("commenter", commenter)
+
+        cursor = connection.cursor()
+        sql = "INSERT INTO COMMENTS(TEXT, DATE_OF_COMMENT, POST_ID, USER_ID, CONTENT_TYPE) VALUES(%s, %s, %s, %s, 'PST');"
+        cursor.execute(sql,[comment, creation_time, post_id, commenter])
+
+        sql = "SELECT ID FROM COMMENTS WHERE TO_CHAR(TEXT) = %s AND DATE_OF_COMMENT = %s AND POST_ID = %s AND USER_ID = %s AND CONTENT_TYPE = 'PST';"
+        cursor.execute(sql, [comment, creation_time, post_id, commenter])
+        comment_id = cursor.fetchone()
+        comment_id = comment_id[0]
+
+        sql = "SELECT USERNAME FROM USERDATA WHERE ID = %s;"
+        cursor.execute(sql, [commenter])
+        username = cursor.fetchone()
+        username = username[0]
+
+        print(username, "fafadsfsdsssssssssssssssssssssssss ")
+        print(comment_id)
+
+        context = {
+            'username': username,
+            'comment_id': comment_id,
+        }
+        cursor.close()
+        return JsonResponse(context)
+
+#############################################
+def sharePost(request):
+
+    post_id = request.POST['post_id']
+    user_id = request.POST['user_id']
+    caption = request.POST['caption']
+    time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    cursor = connection.cursor()
+    sql = "INSERT INTO SHARE_POST(USER_ID, POST_ID, CAPTION, DATE_OF_SHARE) VALUES(%s, %s, %s, %s);"
+    cursor.execute(sql,[user_id, post_id, caption, time])
+
+    sql = "SELECT ID FROM SHARE_POST WHERE USER_ID = %s AND POST_ID = %s AND DATE_OF_SHARE LIKE %s;"
+    cursor.execute(sql, [user_id, post_id, time])
+    r = cursor.fetchone()
+
+    return JsonResponse({'id': r[0]})
+
+def sharedPost(request, shared_id):
+
+    if 'user_id' not in request.session:
+        return redirect('login')
+    user_id = request.session['user_id']
+
+    cursor = connection.cursor()
+    sql = "SELECT POST_ID, USER_ID, CAPTION, AGE_OF_CONTENT(DATE_OF_SHARE) FROM SHARE_POST WHERE ID = %s;"
+    cursor.execute(sql, [shared_id])
+    r = cursor.fetchone()
+
+    sharer_id = r[1]
+    post_id = r[0]
+    age = timeToAge(r[3].split())
+    caption = r[2]
+
+    if str(caption) == "None": caption = ""
+
+    sql = "SELECT USERNAME, PROFILE_PIC, NAME FROM USERDATA WHERE ID = %s"
+    cursor.execute(sql, [sharer_id])
+    r = cursor.fetchone()
+
+    name = r[2]
+    sharer_username = r[0]
+    sharer_profile = r[1]
+    post = getPost(user_id, post_id, 'SHR', sharer_id, shared_id)
+
+    data = {
+        'user_id': user_id,
+        'shared_id': shared_id,
+        'sharer_id': sharer_id,
+        'sharer_name': name,
+        'sharer_username': sharer_username,
+        'sharer_profile': sharer_profile,
+        'shared_age': age,
+        'shared_caption': caption,
+        'post': post,
+    }
+    return render(request, 'pages/share.html', data)
+

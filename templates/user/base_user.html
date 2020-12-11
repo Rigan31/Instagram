@@ -49,3 +49,14 @@
       </div>
     </div>
 </div>
+
+
+<div class="profile-story-body clearfix">
+  {% for story in base.stories_info%}
+    <div class="profile-story-element">
+      <img src="{{story.story_path}}" onclick="modalIndexImage({{story| safe}})">
+    </div>
+  {% endfor %}
+</div>
+
+<div id="myModal" class="modal"></div>
