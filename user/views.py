@@ -212,11 +212,51 @@ def getUserPosts(user_id):
 
     return posts
 
+def getUserSharedPosts(user_id):
+
+    cursor = connection.cursor()
+    sql = "SELECT ID, POST_ID FROM SHARE_POST WHERE USER_ID = %s ORDER BY DATE_OF_SHARE DESC;"
+    cursor.execute(sql, [user_id])
+    rr = cursor.fetchall()
+
+    posts = []
+    for r in rr:
+        shared_id = r[0]
+        shared_post_id = r[1]
+
+        photos = collectphotos(shared_post_id)
+        videos = collectVideos(shared_post_id)
+
+        if len(photos) > 0: photos = photos[0]
+        else: photos = ""
+
+        if len(videos) > 0: videos = videos[0]
+        else: videos = ""
+
+        total_likes = views.totalLikes(shared_id, 'SHR')
+        comment_count = views.getCommentCount(shared_id, user_id, 'SHR')
+
+        row = {
+            'shared_id': shared_id,
+            'photo': photos,
+            'video': videos,
+            'total_likes': total_likes,
+            'comment_count': comment_count,
+        }
+        posts.append(row)
+
+    cursor.close()
+    return posts
+
+
+
 def profile(request, user_id):
     observer_id = request.session['user_id']
+
     context = {
         'base': base_profile(request, user_id, observer_id),
         'user_posts': getUserPosts(user_id),
+        'shared_posts': getUserSharedPosts(user_id),
         'user_id': observer_id,
     }
     return render(request, 'user/user.html', context)

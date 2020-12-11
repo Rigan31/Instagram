@@ -147,6 +147,119 @@
             </div>
         {% endfor %}
 
+
+
+
+
+
+
+
+
+
+
+        {% for sharePost in sharePosts%}
+        <div class="post">
+            <div class="poster clearfix">
+                <div class="photo-box">
+                    <a href="{% url 'profile' sharePost.id %}"><img src="{{ sharePost.photo }}" alt="identity" class="photo"></a>
+                </div>
+                
+                <div class="name">
+                    <a href="{% url 'profile' sharePost.id %}">{{sharePost.name}}</a>
+                </div>
+            </div>
+
+            <div class="caption">
+                {{sharePost.caption}}
+            </div>
+
+            {% if sharePost.post.mediaCount|length > 0%}
+            <div class="media">
+
+                {% for photo in sharePost.post.photos %}
+                    {% if forloop.counter == 1 %}
+                        <img src="{{ photo }}" class="post-photo-in-post" style="display: block !important;" />
+                    {% else %}
+                        <img src="{{ photo }}" class="post-photo-in-post" />
+                    {% endif %}
+                {% endfor %}
+    
+                {% for video in sharePost.post.videos %}
+                    {% if post.photos|length == 0 and forloop.counter == 1 %}
+                        <video class="post-video-in-post" src ="{{ video }}" style="display: block !important;" controls></video>
+                    {% else %}
+                        <video class="post-video-in-post" src="{{video}}" controls></video>
+                    {% endif %}
+                {% endfor %}
+    
+                <a class="button-in-post prev" onclick="slideMedia(this, {{ sharePost.post.photos }}, {{ sharePost.post.videos }}, -1)">&#10094;</a>
+                {% if sharePost.post.mediaCount|length > 1 %}
+                <a class="button-in-post next" onclick="slideMedia(this, {{ sharePost.post.photos }}, {{ sharePost.post.videos }}, 1)">&#10095;</a>
+                {% endif %}
+    
+                <div class="dot-container-on-media">
+                    {% for i in sharePost.post.mediaCount %}
+    
+                        {% if forloop.counter == 1  %}
+                            <span class="dot-on-media" style="background-color:deepskyblue;"></span>
+                        {% else %}
+                            <span class="dot-on-media" style="background-color:#bbb"></span>
+                        {% endif %}
+    
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="post_icons">
+                {% csrf_token %}
+                <ul class="icons clearfix">
+                    {% if sharePost.post.isLike %}
+                        <li><i class="fa fa-heart like-for-post" aria-hidden="true" onclick="likes('{{user_id}}', '{{sharePost.shared_id}}', this, 'SHR')"></i></li>
+                    {% else %}
+                        <li><i class="fa fa-heart-o like-for-post" aria-hidden="true" onclick="likes('{{user_id}}', '{{sharePost.shared_id}}', this, 'SHR')"></i></li>
+                    {% endif %}
+                    <li><a href="{% url 'sharedPost' sharePost.shared_id %}"><i class="fa fa-comment-o" aria-hidden="true" onclick="commentButtonClick(document.getElementsByClassName('add-comment-in-post')[0], '')"></i></a></li>
+                    <li><i class="fa fa-paper-plane-o" aria-hidden="true" onclick="showShareCaptionWrite(document.getElementsByClassName('share-container')[0])"></i></li>
+                    {% if post.isSave %}
+                        <li><i class="fa fa-bookmark" aria-hidden="true" onClick="saved('{{user_id}}', '{{sharePost.post.post_id}}', this)"></i></li>
+                    {% else %}
+                        <li><i class="fa fa-bookmark-o" aria-hidden="true" onClick="saved('{{user_id}}', '{{sharePost.post.post_id}}', this)"></i></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div class="text">
+                <button class="like_list_show_button" id="like_list_show_button" onclick="like_list('{{ sharePost.post.user_id }}','{{ sharePost.shared_id }}', this)" >{{ sharePost.post.total_likes }} likes</button>
+            </div>
+
+            <div class="index-post-age">
+                {{ sharePost.age}}
+            </div>
+
+            <div class="caption">
+                <a href="{% url 'profile' sharePost.post.poster_id%}">@{{sharePost.post.poster_username}}</a> {{sharePost.post.caption}}
+            </div>
+
+            <div class="add-comment clearfix">
+                {% csrf_token %}
+                <input type="text" placeholder="Add your comment" onkeyup="change_color_of_post_button(this)">
+                <button type="submit" onclick="addComment(this, '{{ user_id }}', '{{ sharePost.shared_id }}', 'SHR')" disabled>Post</button>
+            </div>
+        </div>
+        {% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+
             <!-- like list -->
             <div class="like_list_container" id="like_list_container" onclick="close_list()">
                 <div class="like_list_inner_container" id="like_list_inner_container" onclick="inner_container_stop_propagation()">

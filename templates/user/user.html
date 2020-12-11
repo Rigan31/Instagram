@@ -45,5 +45,25 @@
         {% endfor %}
 
 
+        {% for post in shared_posts %}
+            <div class="image-container" onclick="location.href='http://127.0.0.1:8000/share/{{ post.shared_id }}'">
+                <div class="image-hover" onmouseleave="showHoverArea(this.parentElement,0)">
+                    <p>
+                    {{ post.comment_count }} <i class="fa fa-comment kala-comment" area-hidden="true"></i>
+                       {{ post.total_likes }} <i class="fa fa-heart kala-heart" area-hidden="true"></i> </p>
+                </div>
+
+                {% if post.photo|length != 0 %}
+                    <i class="fa fa-picture-o indicator-icon" area-hidden="true"></i>
+                    <img src="{{ post.photo }}" class="post-image" onmouseover="showHoverArea(this.parentElement,1)"  />
+                {% else %}
+                    <i class="fa fa-video-camera indicator-icon" area-hidden="true"></i>
+                    <video src="{{ post.video }}" class="post-video" onmouseover="showHoverArea(this.parentElement,1)" onmouseleave="showHoverArea(this.parentElement,0)"></video>
+                {% endif %}
+            </div>
+
+        {% endfor %}
+
+
     </div>
 {% endblock %}

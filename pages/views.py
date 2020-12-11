@@ -202,6 +202,68 @@ def getPosts1(user_id):
     
     return posts
 
+def getSharePost(user, user_id):
+    cursor = connection.cursor()
+
+    sql = "SELECT NAME, PROFILE_PIC FROM USERDATA WHERE ID = %s;"
+    cursor.execute(sql, [user])
+    result = cursor.fetchone()
+
+    name = result[0]
+    photo = result[1]
+
+    sql = "SELECT ID, POST_ID, CAPTION, DATE_OF_SHARE, AGE_OF_CONTENT(DATE_OF_SHARE) FROM SHARE_POST WHERE USER_ID = %s;"
+    cursor.execute(sql, [user])
+    result = cursor.fetchall()
+
+    posts = []
+    for r in result:
+        id = r[0]
+        post_id = r[1]
+        caption = r[2]
+        creation_time = r[3]
+        sss = r[4].split()
+        age = timeToAge(sss)
+
+        post = getPost(user_id, post_id, 'SHR',user, id)
+        context = {
+            'post': post,
+            'caption': caption,
+            'id': user,
+            'name': name,
+            'photo': photo,
+            'shared_id': id,
+            'age': age,
+        }
+        posts.append(context)
+    
+    cursor.close()
+    
+    return posts
+
+
+def getSharePosts(user_id):
+    user_list = []
+    user_list.append(user_id)
+
+    cursor = connection.cursor()
+    sql = "SELECT FOLLOWEE_ID FROM FOLLOW WHERE FOLLOWER_ID = %s;"
+    cursor.execute(sql, [user_id])
+    result = cursor.fetchall()
+
+    for r in result:
+        user_list.append(r[0])
+    
+    sharePosts = []
+
+    for user in user_list:
+        posts = getSharePost(user, user_id)
+        for post in posts:
+            sharePosts.append(post)
+
+    print("ajfksjkkkkkkkkkkkkkkkkkkkkkkkkkkk")
+    print(sharePosts)
+    return sharePosts
 
 def getPosts(user_id):
     user_list = []
@@ -222,7 +284,6 @@ def getPosts(user_id):
         result = cursor.fetchall()
         for r in result:
             posts.append(getPost(user, r[0]))
-    
 
     posts = sorted(posts, key=lambda k: k['creation_time'], reverse=True) 
     return posts
@@ -301,6 +362,7 @@ def index(request):
 
     context = {
         'posts': getPosts(user_id),
+        'sharePosts': getSharePosts(user_id),
         'stories': getStories(user_id),
         'user_id': user_id,
         'user_photo': user_info[0],

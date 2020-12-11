@@ -104,7 +104,7 @@ function likes(user, content_id, x, content_type='PST'){
 
             var z = null
             for(var i = 0; i < y.children.length; i++){
-                if(y.children[i].className == "text" || y.children[i].className == "text text-in-post-view"){
+                if(y.children[i].className == "text" || y.children[i].className == "text text-in-post-view"|| y.children[i].className == "text text-in-post-view text-in-post-view"){
                     z = y.children[i]
                     break
                 }
@@ -814,7 +814,7 @@ function showShareCaptionWrite(x){
     x.children[1].style.display = "none";
 }
 
-window.addEventListener('click', function (e) {
+document.getElementsByClassName('share-container')[0].addEventListener('click', function (e) {
     var y = document.getElementsByClassName('share-container')[0]
     var x = y.children[0]
 
